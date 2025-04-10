@@ -20,12 +20,30 @@ describe("PageTwo.vue", () => {
   });
 
   it('renders the title "Page Two"', () => {
-    const wrapper = mount(PageTwo, { global: { plugins: [router] } });
+    const wrapper = mount(PageTwo, {
+      global: {
+        plugins: [router],
+        stubs: {
+          Button: {
+            template: `<button @click="$emit('click')"><slot /></button>`,
+          },
+        },
+      },
+    });
     expect(wrapper.text()).toContain("Page Two");
   });
 
   it("navigates to Page One on button click", async () => {
-    const wrapper = mount(PageTwo, { global: { plugins: [router] } });
+    const wrapper = mount(PageTwo, {
+      global: {
+        plugins: [router],
+        stubs: {
+          Button: {
+            template: `<button @click="$emit('click')"><slot /></button>`,
+          },
+        },
+      },
+    });
     const button = wrapper.find("button");
     await button.trigger("click");
     await flushPromises();

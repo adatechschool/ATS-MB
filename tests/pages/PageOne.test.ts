@@ -20,14 +20,32 @@ describe("PageOne.vue", () => {
   });
 
   it('renders the title "Page One"', () => {
-    const wrapper = mount(PageOne, { global: { plugins: [router] } });
+    const wrapper = mount(PageOne, {
+      global: {
+        plugins: [router],
+        stubs: {
+          // Custom stub that renders a native button element
+          Button: {
+            template: `<button @click="$emit('click')"><slot /></button>`,
+          },
+        },
+      },
+    });
     expect(wrapper.text()).toContain("Page One");
   });
 
   it("navigates to Page Two on button click", async () => {
-    const wrapper = mount(PageOne, { global: { plugins: [router] } });
-    // Find the PrimeVue button. Since Button is rendered as a native <button>,
-    // adjust the selector if needed.
+    const wrapper = mount(PageOne, {
+      global: {
+        plugins: [router],
+        stubs: {
+          Button: {
+            template: `<button @click="$emit('click')"><slot /></button>`,
+          },
+        },
+      },
+    });
+    // Find the stubbed native button element.
     const button = wrapper.find("button");
     await button.trigger("click");
     await flushPromises();
