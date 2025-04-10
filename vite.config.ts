@@ -17,5 +17,6 @@ export default defineConfig({
     reporters: ["verbose"],
     isolate: false,
     watch: false,
+    environment: "jsdom",
   },
 });

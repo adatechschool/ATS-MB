@@ -1,4 +1,4 @@
-// src\tests\alwaysPass.test.ts
+// tests\alwaysPass.test.ts
 
 import { describe, it, expect } from "vitest";
 
