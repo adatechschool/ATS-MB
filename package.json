@@ -26,11 +26,19 @@
     "eslint-plugin-vue": "^10.0.0",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "prettier": "3.5.3",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.29.1",
     "vite": "^6.2.0",
     "vitest": "^3.1.1",
     "vue-tsc": "^2.2.4"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
   }
 }

@@ -1,0 +1,9 @@
+# .eslintignore
+
+# Ignore node_modules and build outputs
+node_modules/
+dist/
+build/
+
+# Ignore coverage reports and other artifacts
+coverage/
