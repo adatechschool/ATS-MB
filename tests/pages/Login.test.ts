@@ -3,7 +3,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import flushPromises from "flush-promises";
-import LoginPage from "../../src/pages/Login.vue";
+import LoginPage from "../../src/pages/LoginPage.vue";
 import axios from "axios";
 import ToastService from "primevue/toastservice";
 

@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import PageOne from "../pages/PageOne.vue";
 import PageTwo from "../pages/PageTwo.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
-import LoginPage from "../pages/Login.vue";
+import LoginPage from "../pages/LoginPage.vue";
 
 const routes = [
   { path: "/", redirect: "/page-one" },

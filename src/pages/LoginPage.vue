@@ -1,4 +1,4 @@
-<!-- src\pages\Login.vue -->
+<!-- src\pages\LoginPage.vue -->
 
 <template>
   <div class="card flex min-h-screen items-center justify-center">
