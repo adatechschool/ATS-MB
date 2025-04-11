@@ -22,6 +22,7 @@ import App from "./App.vue";
 import router from "./router";
 
 import PrimeNavbar from "./components/PrimeNavbar.vue";
+import FooterComponent from "./components/FooterComponent.vue";
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -48,6 +49,7 @@ app.component("PrimeBadge", Badge);
 app.component("PrimeAvatar", Avatar);
 
 app.component("PrimeNavbar", PrimeNavbar);
+app.component("FooterComponent", FooterComponent);
 
 app.use(router);
 app.mount("#app");

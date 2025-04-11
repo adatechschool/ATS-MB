@@ -4,6 +4,7 @@
   <PrimeToast />
   <PrimeNavbar />
   <router-view />
+  <FooterComponent />
 </template>
 
 <script setup lang="ts"></script>
