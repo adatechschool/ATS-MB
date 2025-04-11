@@ -5,9 +5,11 @@ import PageOne from "../pages/PageOne.vue";
 import PageTwo from "../pages/PageTwo.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
+import Timeline from "../pages/Timeline.vue";
 
 const routes = [
-  { path: "/", redirect: "/page-one" },
+  { path: "/", redirect: "/timeline" },
+  { path: "/timeline", name: "Timeline", component: Timeline },
   { path: "/page-one", name: "PageOne", component: PageOne },
   { path: "/page-two", name: "PageTwo", component: PageTwo },
   { path: "/register", name: "RegisterPage", component: RegisterPage },

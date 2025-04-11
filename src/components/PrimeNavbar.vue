@@ -75,6 +75,11 @@ const router = useRouter();
 
 const items = ref([
   {
+    label: "Fil d’actualité",
+    icon: "pi pi-list",
+    command: () => router.push("/timeline"),
+  },
+  {
     label: "Page One",
     icon: "pi pi-home",
     command: () => router.push("/page-one"),
