@@ -1,7 +1,7 @@
 <!-- src\App.vue -->
 
 <template>
-  <!-- The router-view will render the current route's component -->
+  <PrimeToast />
   <router-view />
 </template>
 
