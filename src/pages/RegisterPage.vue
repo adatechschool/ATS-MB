@@ -4,7 +4,6 @@
   <div class="card flex justify-center">
     <PrimeForm
       :initialValues="initialValues"
-      :resolver="resolver"
       @submit="onFormSubmit"
       class="flex w-full flex-col gap-4 sm:w-80"
     >
@@ -27,29 +26,12 @@
       </PrimeFormField>
       <PrimeFormField
         v-slot="$field"
-        name="firstname"
+        name="email"
         initialValue=""
-        :resolver="yupFirstNameResolver"
+        :resolver="yupEmailResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="First Name" />
-        <PrimeMessage
-          v-if="$field?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $field.error?.message }}
-        </PrimeMessage>
-      </PrimeFormField>
-      <PrimeFormField
-        v-slot="$field"
-        name="lastname"
-        initialValue=""
-        :resolver="valibotLastNameResolver"
-        class="flex flex-col gap-1"
-      >
-        <PrimeInputText type="text" placeholder="Last Name" />
+        <PrimeInputText type="text" placeholder="Email" />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -82,21 +64,6 @@
           {{ $field.error?.message }}
         </PrimeMessage>
       </PrimeFormField>
-      <PrimeFormField
-        v-slot="$field"
-        name="details"
-        class="flex flex-col gap-1"
-      >
-        <PrimeTextarea placeholder="Details" />
-        <PrimeMessage
-          v-if="$field?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $field.error?.message }}
-        </PrimeMessage>
-      </PrimeFormField>
       <PrimeButton type="submit" severity="secondary" label="Submit" />
     </PrimeForm>
   </div>
@@ -107,8 +74,6 @@
 import { reactive } from "vue";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
-import { valibotResolver } from "@primevue/forms/resolvers/valibot";
-import * as v from "valibot";
 import * as yup from "yup";
 import { z } from "zod";
 import { useToast } from "primevue/usetoast";
@@ -120,26 +85,19 @@ const initialValues = reactive({
   details: "",
 });
 
-// Exemple de résolveur global pour le champ "details"
-const resolver = zodResolver(
-  z.object({
-    details: z
-      .string()
-      .min(1, { message: "Details is required via Form Resolver." }),
-  }),
-);
-
 // Différents résolveurs pour valider les autres champs
 const zodUserNameResolver = zodResolver(
   z.string().min(1, { message: "Username is required via Zod." }),
 );
-const yupFirstNameResolver = yupResolver(
+
+// Mise à jour du résolveur Yup pour valider une adresse email
+const yupEmailResolver = yupResolver(
   yup.object({
-    firstName: yup.string().required("First name is required via Yup."),
+    email: yup
+      .string()
+      .email("Must be a valid email address.")
+      .required("Email is required via Yup."),
   }),
-);
-const valibotLastNameResolver = valibotResolver(
-  v.pipe(v.string(), v.minLength(1, "Last name is required via Valibot.")),
 );
 
 // Résolveur personnalisé pour le champ "password"
