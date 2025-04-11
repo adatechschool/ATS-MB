@@ -69,34 +69,52 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const items = ref([
   {
-    label: "Home",
+    label: "Page One",
     icon: "pi pi-home",
+    command: () => router.push("/page-one"),
   },
   {
-    label: "Projects",
-    icon: "pi pi-search",
-    badge: 3,
-    items: [
-      {
-        label: "Core",
-        icon: "pi pi-bolt",
-        shortcut: "⌘+S",
-      },
-      {
-        label: "Blocks",
-        icon: "pi pi-server",
-        shortcut: "⌘+B",
-      },
-      { separator: true },
-      {
-        label: "UI Kit",
-        icon: "pi pi-pencil",
-        shortcut: "⌘+U",
-      },
-    ],
+    label: "Page Two",
+    icon: "pi pi-file",
+    command: () => router.push("/page-two"),
   },
+  {
+    label: "Register",
+    icon: "pi pi-user-plus",
+    command: () => router.push("/register"),
+  },
+  //   {
+  //     label: "Home",
+  //     icon: "pi pi-home",
+  //   },
+  //   {
+  //     label: "Projects",
+  //     icon: "pi pi-search",
+  //     badge: 3,
+  //     items: [
+  //       {
+  //         label: "Core",
+  //         icon: "pi pi-bolt",
+  //         shortcut: "⌘+S",
+  //       },
+  //       {
+  //         label: "Blocks",
+  //         icon: "pi pi-server",
+  //         shortcut: "⌘+B",
+  //       },
+  //       { separator: true },
+  //       {
+  //         label: "UI Kit",
+  //         icon: "pi pi-pencil",
+  //         shortcut: "⌘+U",
+  //       },
+  //     ],
+  //   },
 ]);
 </script>
