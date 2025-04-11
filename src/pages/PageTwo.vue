@@ -7,7 +7,7 @@
     <WorldComponent />
     <div class="mt-4">
       <!-- PrimeVue button to navigate back to Page One -->
-      <Button label="Go to Page One" @click="goToPageOne" />
+      <PrimeButton label="Go to Page One" @click="goToPageOne" />
     </div>
   </div>
 </template>

@@ -7,7 +7,7 @@
     <HelloComponent />
     <div class="mt-4">
       <!-- PrimeVue button to navigate to Page Two -->
-      <Button label="Go to Page Two" @click="goToPageTwo" />
+      <PrimeButton label="Go to Page Two" @click="goToPageTwo" />
     </div>
   </div>
 </template>

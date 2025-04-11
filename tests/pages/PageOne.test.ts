@@ -25,7 +25,7 @@ describe("PageOne.vue", () => {
         plugins: [router],
         stubs: {
           // Custom stub that renders a native button element
-          Button: {
+          PrimeButton: {
             template: `<button @click="$emit('click')"><slot /></button>`,
           },
         },
@@ -39,7 +39,7 @@ describe("PageOne.vue", () => {
       global: {
         plugins: [router],
         stubs: {
-          Button: {
+          PrimeButton: {
             template: `<button @click="$emit('click')"><slot /></button>`,
           },
         },

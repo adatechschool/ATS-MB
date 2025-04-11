@@ -24,7 +24,7 @@ describe("PageTwo.vue", () => {
       global: {
         plugins: [router],
         stubs: {
-          Button: {
+          PrimeButton: {
             template: `<button @click="$emit('click')"><slot /></button>`,
           },
         },
@@ -38,7 +38,7 @@ describe("PageTwo.vue", () => {
       global: {
         plugins: [router],
         stubs: {
-          Button: {
+          PrimeButton: {
             template: `<button @click="$emit('click')"><slot /></button>`,
           },
         },
