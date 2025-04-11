@@ -1,9 +1,12 @@
 // src\main.ts
 
 import { createApp } from "vue";
+
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
+
 import ToastService from "primevue/toastservice";
+
 import Toast from "primevue/toast";
 import Button from "primevue/button";
 import { Form, FormField } from "@primevue/forms";
@@ -11,8 +14,14 @@ import InputText from "primevue/inputtext";
 import Message from "primevue/message";
 import Password from "primevue/password";
 import Textarea from "primevue/textarea";
+import Menubar from "primevue/menubar";
+import Badge from "primevue/badge";
+import Avatar from "primevue/avatar";
+
 import App from "./App.vue";
 import router from "./router";
+
+import PrimeNavbar from "./components/PrimeNavbar.vue";
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -23,7 +32,10 @@ app.use(PrimeVue, {
     },
   },
 });
+
 app.use(ToastService);
+
+app.component("PrimeToast", Toast);
 app.component("PrimeButton", Button);
 app.component("PrimeForm", Form);
 app.component("PrimeFormField", FormField);
@@ -31,6 +43,11 @@ app.component("PrimeInputText", InputText);
 app.component("PrimeMessage", Message);
 app.component("PrimePassword", Password);
 app.component("PrimeTextarea", Textarea);
-app.component("PrimeToast", Toast);
+app.component("PrimeMenubar", Menubar);
+app.component("PrimeBadge", Badge);
+app.component("PrimeAvatar", Avatar);
+
+app.component("PrimeNavbar", PrimeNavbar);
+
 app.use(router);
 app.mount("#app");

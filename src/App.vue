@@ -2,6 +2,7 @@
 
 <template>
   <PrimeToast />
+  <PrimeNavbar />
   <router-view />
 </template>
 
