@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import "primeicons/primeicons.css";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
