@@ -76,13 +76,16 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import { z } from "zod";
+import axios from "axios";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 
 // Valeurs initiales pour le formulaire
 const initialValues = reactive({
-  details: "",
+  username: "",
+  email: "",
+  password: "",
 });
 
 // Différents résolveurs pour valider les autres champs
@@ -92,12 +95,15 @@ const zodUserNameResolver = zodResolver(
 
 // Mise à jour du résolveur Yup pour valider une adresse email
 const yupEmailResolver = yupResolver(
-  yup.object({
-    email: yup
-      .string()
-      .email("Must be a valid email address.")
-      .required("Email is required via Yup."),
-  }),
+  yup
+    .object({
+      email: yup
+        .string()
+        .email("Must be a valid email address.")
+        .required("Email is required via Yup."),
+    })
+    // La transformation enveloppe la valeur brute dans un objet avec la clé "email"
+    .transform((_, originalValue) => ({ email: originalValue })),
 );
 
 // Résolveur personnalisé pour le champ "password"
@@ -110,13 +116,40 @@ const customPasswordResolver = ({ value }: { value: string }) => {
 };
 
 // Handler de soumission du formulaire : affiche un toast de succès si le formulaire est validé
-const onFormSubmit = ({ valid }: { valid: boolean }) => {
+const onFormSubmit = async ({
+  valid,
+  values,
+}: {
+  valid: boolean;
+  values: { username: string; email: string; password: string };
+}) => {
   if (valid) {
-    toast.add({
-      severity: "success",
-      summary: "Form is submitted.",
-      life: 3000,
-    });
+    try {
+      const apiUrl = `${import.meta.env.VITE_DJANGO_API_URL}/api/auth/register/`;
+      const response = await axios.post(apiUrl, {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      });
+      toast.add({
+        severity: "success",
+        summary: response.data.message || "Registration successful.",
+        life: 3000,
+      });
+    } catch (error: unknown) {
+      let errorMessage = "Registration failed.";
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data?.message || error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.add({
+        severity: "error",
+        summary: "Registration failed.",
+        detail: errorMessage,
+        life: 3000,
+      });
+    }
   }
 };
 </script>
