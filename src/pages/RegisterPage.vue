@@ -7,6 +7,18 @@
       @submit="onFormSubmit"
       class="flex w-full flex-col gap-4 sm:w-80"
     >
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-3xl font-medium">Join us!</h1>
+        <span
+          class="text-surface-600 dark:text-surface-200 leading-normal font-medium"
+          >Already have an account?</span
+        >
+        <PrimeButton
+          label="Log in here."
+          variant="link"
+          @click="onLoginClick"
+        />
+      </div>
       <PrimeFormField
         v-slot="$field"
         name="username"
@@ -64,13 +76,14 @@
           {{ $field.error?.message }}
         </PrimeMessage>
       </PrimeFormField>
-      <PrimeButton type="submit" severity="secondary" label="Submit" />
+      <PrimeButton type="submit" severity="secondary" label="Register" />
     </PrimeForm>
   </main>
 </template>
 
 <script setup lang="ts">
 // Importations de Vue et PrimeVue Forms ainsi que les résolveurs
+import { useRouter } from "vue-router";
 import { reactive } from "vue";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
@@ -80,6 +93,7 @@ import axios from "axios";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
+const router = useRouter();
 
 // Valeurs initiales pour le formulaire
 const initialValues = reactive({
@@ -113,6 +127,11 @@ const customPasswordResolver = ({ value }: { value: string }) => {
     errors.push({ message: "Password is required via Custom." });
   }
   return { errors };
+};
+
+// Handler de clic sur le bouton "Login"
+const onLoginClick = () => {
+  router.push("/login");
 };
 
 // Handler de soumission du formulaire : affiche un toast de succès si le formulaire est validé

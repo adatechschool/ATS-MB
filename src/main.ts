@@ -19,6 +19,7 @@ import Menubar from "primevue/menubar";
 import Badge from "primevue/badge";
 import Avatar from "primevue/avatar";
 import Chip from "primevue/chip";
+import Checkbox from "primevue/checkbox";
 
 import App from "./App.vue";
 import router from "./router";
@@ -50,6 +51,7 @@ app.component("PrimeMenubar", Menubar);
 app.component("PrimeBadge", Badge);
 app.component("PrimeAvatar", Avatar);
 app.component("PrimeChip", Chip);
+app.component("PrimeCheckbox", Checkbox);
 
 app.component("PrimeNavbar", PrimeNavbar);
 app.component("FooterComponent", FooterComponent);

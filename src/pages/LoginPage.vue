@@ -7,6 +7,18 @@
       @submit="onFormSubmit"
       class="flex w-full flex-col gap-4 sm:w-80"
     >
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-3xl font-medium">Welcome!</h1>
+        <span
+          class="text-surface-600 dark:text-surface-200 leading-normal font-medium"
+          >Don't have an account?</span
+        >
+        <PrimeButton
+          label="Create one here."
+          variant="link"
+          @click="onRegisterClick"
+        />
+      </div>
       <!-- Champ username -->
       <PrimeFormField
         v-slot="$field"
@@ -51,19 +63,35 @@
         </PrimeMessage>
       </PrimeFormField>
 
+      <div class="mb-12 flex items-center justify-between">
+        <div class="flex items-center">
+          <PrimeCheckbox
+            id="rememberme1"
+            v-model="checked1"
+            :binary="true"
+            class="mr-2"
+          />
+          <label for="rememberme1">Remember me</label>
+        </div>
+        <PrimeButton label="Forgot password?" variant="link" />
+      </div>
+
       <PrimeButton type="submit" severity="secondary" label="Login" />
     </PrimeForm>
   </main>
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { reactive, ref } from "vue";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
+const router = useRouter();
+const checked1 = ref(false);
 
 // Valeurs initiales du formulaire
 const initialValues = reactive({
@@ -83,6 +111,11 @@ const customPasswordResolver = ({ value }: { value: string }) => {
     errors.push({ message: "Password is required." });
   }
   return { errors };
+};
+
+// Handler de clic sur le bouton "Register"
+const onRegisterClick = () => {
+  router.push("/register");
 };
 
 // Handler de soumission du formulaire
