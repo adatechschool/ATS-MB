@@ -50,6 +50,7 @@
             variant="outlined"
             aria-label="User"
             class="mr-2"
+            @click="onProfileClick"
           />
         </div>
       </template>
@@ -69,20 +70,25 @@ const items = ref([
     icon: "pi pi-list",
     command: () => router.push("/timeline"),
   },
-  {
-    label: "Register",
-    icon: "pi pi-user-plus",
-    command: () => router.push("/register"),
-  },
-  {
-    label: "Login",
-    icon: "pi pi-sign-in",
-    command: () => router.push("/login"),
-  },
+  // {
+  //   label: "Register",
+  //   icon: "pi pi-user-plus",
+  //   command: () => router.push("/register"),
+  // },
+  // {
+  //   label: "Login",
+  //   icon: "pi pi-sign-in",
+  //   command: () => router.push("/login"),
+  // },
   {
     label: "Profile",
     icon: "pi pi-user",
     command: () => router.push("/profile"),
   },
 ]);
+
+// Handler de clic sur le bouton "Profile"
+const onProfileClick = () => {
+  router.push("/login");
+};
 </script>
