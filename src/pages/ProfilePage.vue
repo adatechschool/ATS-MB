@@ -9,26 +9,35 @@
         >
           Account Information
         </div>
-        <!-- Avatar Section with file upload -->
+        <!-- Avatar Section with file upload and hover overlay -->
         <div class="flex w-full items-center gap-4">
-          <div class="relative">
-            <!-- Display avatar with image if a profile picture has been uploaded, otherwise fallback to label -->
-            <PrimeAvatar
-              v-if="profilePicture"
-              :image="profilePicture"
-              class="mr-2 cursor-pointer"
-              size="xlarge"
-              shape="circle"
+          <div class="group relative">
+            <!-- Display avatar with image if available, otherwise fallback to label -->
+            <template v-if="profilePicture">
+              <PrimeAvatar
+                :image="profilePicture"
+                class="mr-2 cursor-pointer"
+                size="xlarge"
+                shape="circle"
+                @click="triggerFileInput"
+              />
+            </template>
+            <template v-else>
+              <PrimeAvatar
+                label="P"
+                class="mr-2 cursor-pointer"
+                size="xlarge"
+                shape="circle"
+                @click="triggerFileInput"
+              />
+            </template>
+            <!-- Hover overlay with pencil icon -->
+            <div
+              class="bg-opacity-50 absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl bg-black opacity-0 transition-opacity group-hover:opacity-70"
               @click="triggerFileInput"
-            />
-            <PrimeAvatar
-              v-else
-              label="P"
-              class="mr-2 cursor-pointer"
-              size="xlarge"
-              shape="circle"
-              @click="triggerFileInput"
-            />
+            >
+              <i class="pi pi-pencil text-2xl text-white"></i>
+            </div>
             <!-- Hidden file input -->
             <input
               type="file"
@@ -188,5 +197,5 @@ function onProfilePictureSelected(event: Event) {
 </script>
 
 <style scoped>
-/* Add any additional styling if needed */
+/* Additional styling can be added if needed */
 </style>
