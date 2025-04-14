@@ -1,7 +1,7 @@
 <!-- src\pages\LoginPage.vue -->
 
 <template>
-  <div class="card flex min-h-screen items-center justify-center">
+  <div class="card flex flex-1 flex-col items-center justify-center">
     <PrimeForm
       :initialValues="initialValues"
       @submit="onFormSubmit"

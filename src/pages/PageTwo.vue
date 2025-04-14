@@ -1,7 +1,7 @@
 <!-- src\pages\PageTwo.vue -->
 
 <template>
-  <div class="container mx-auto p-4">
+  <div class="container mx-auto flex flex-1 flex-col p-4">
     <h1 class="mb-4 text-2xl font-bold">Page Two</h1>
     <!-- Use the WorldComponent -->
     <WorldComponent />

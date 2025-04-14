@@ -1,14 +1,17 @@
 <!-- src\pages\Timeline.vue -->
 
 <template>
-  <div class="p-4">
+  <div class="flex flex-1 flex-col gap-4 p-4">
     <h1 class="mb-4 text-2xl font-bold">Fil d'actualité</h1>
     <!-- Affichage d'un indicateur de chargement -->
-    <div v-if="loading" class="text-center">
+    <div
+      v-if="loading"
+      class="flex flex-1 items-center justify-center text-center"
+    >
       <ProgressSpinner />
     </div>
     <!-- Si la récupération est terminée -->
-    <div v-else>
+    <div v-else class="flex flex-1 items-center justify-center">
       <!-- Message si aucun post n'est disponible -->
       <div v-if="posts.length === 0">
         <p>Aucun post à afficher.</p>
