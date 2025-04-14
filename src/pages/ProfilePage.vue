@@ -9,8 +9,35 @@
         >
           Account Information
         </div>
+        <!-- Avatar Section with file upload -->
         <div class="flex w-full items-center gap-4">
-          <PrimeAvatar label="P" class="mr-2" size="xlarge" shape="circle" />
+          <div class="relative">
+            <!-- Display avatar with image if a profile picture has been uploaded, otherwise fallback to label -->
+            <PrimeAvatar
+              v-if="profilePicture"
+              :image="profilePicture"
+              class="mr-2 cursor-pointer"
+              size="xlarge"
+              shape="circle"
+              @click="triggerFileInput"
+            />
+            <PrimeAvatar
+              v-else
+              label="P"
+              class="mr-2 cursor-pointer"
+              size="xlarge"
+              shape="circle"
+              @click="triggerFileInput"
+            />
+            <!-- Hidden file input -->
+            <input
+              type="file"
+              ref="fileInput"
+              class="hidden"
+              accept="image/*"
+              @change="onProfilePictureSelected"
+            />
+          </div>
           <div class="flex flex-1 flex-col gap-0.5">
             <h1 class="text-xl font-bold">Phil</h1>
             <div class="flex gap-8">
@@ -25,6 +52,7 @@
             </div>
           </div>
         </div>
+
         <div class="text-surface-500 dark:text-surface-300 mt-2 mb-8">
           Joined on 2022-01-01
         </div>
@@ -42,7 +70,6 @@
               class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
             >
               <template v-if="isEditingEmail">
-                <!-- Editable input for email -->
                 <PrimeInputText
                   v-model="email"
                   placeholder="Email"
@@ -85,7 +112,6 @@
               class="text-surface-900 dark:text-surface-0 order-1 w-full leading-normal md:order-none md:w-8/12"
             >
               <template v-if="isEditingBio">
-                <!-- Editable textarea for bio -->
                 <PrimeTextarea
                   v-model="bio"
                   autoResize
@@ -135,8 +161,32 @@ const bio = ref(
 // Reactive flags to control edit modes.
 const isEditingEmail = ref(false);
 const isEditingBio = ref(false);
+
+// Reactive value for profile picture URL.
+const profilePicture = ref("");
+
+// Reference for the hidden file input.
+const fileInput = ref<HTMLInputElement | null>(null);
+
+// Function to trigger the click event of the hidden file input.
+function triggerFileInput() {
+  if (fileInput.value) {
+    fileInput.value.click();
+  }
+}
+
+// Handler for file selection event.
+function onProfilePictureSelected(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0];
+    // Create a temporary URL for previewing the image.
+    profilePicture.value = URL.createObjectURL(file);
+    // Optionally, upload the file to your server here.
+  }
+}
 </script>
 
 <style scoped>
-/* You can add additional styling if needed */
+/* Add any additional styling if needed */
 </style>
