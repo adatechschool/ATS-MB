@@ -7,7 +7,7 @@
         <div
           class="text-surface-900 dark:text-surface-0 mb-4 text-3xl font-medium"
         >
-          Movie Information
+          Account Information
         </div>
         <div class="flex w-full items-center gap-4">
           <PrimeAvatar label="P" class="mr-2" size="xlarge" shape="circle" />
@@ -26,8 +26,7 @@
           </div>
         </div>
         <div class="text-surface-500 dark:text-surface-300 mb-8">
-          Morbi tristique blandit turpis. In viverra ligula id nulla hendrerit
-          rutrum.
+          Joined on 2022-01-01
         </div>
         <ul class="m-0 list-none p-0">
           <li
@@ -36,65 +35,12 @@
             <div
               class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
             >
-              Title
+              Email
             </div>
             <div
               class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
             >
-              Heat
-            </div>
-            <div class="flex w-6/12 justify-end md:w-2/12">
-              <PrimeButton label="Edit" icon="pi pi-pencil" text />
-            </div>
-          </li>
-          <li
-            class="border-surface flex flex-wrap items-center border-t px-2 py-4"
-          >
-            <div
-              class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
-            >
-              Genre
-            </div>
-            <div
-              class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
-            >
-              <PrimeChip label="Crime" class="mr-2" />
-              <PrimeChip label="Drama" class="mr-2" />
-              <PrimeChip label="Thriller" />
-            </div>
-            <div class="flex w-6/12 justify-end md:w-2/12">
-              <PrimeButton label="Edit" icon="pi pi-pencil" text />
-            </div>
-          </li>
-          <li
-            class="border-surface flex flex-wrap items-center border-t px-2 py-4"
-          >
-            <div
-              class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
-            >
-              Director
-            </div>
-            <div
-              class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
-            >
-              Michael Mann
-            </div>
-            <div class="flex w-6/12 justify-end md:w-2/12">
-              <PrimeButton label="Edit" icon="pi pi-pencil" text />
-            </div>
-          </li>
-          <li
-            class="border-surface flex flex-wrap items-center border-t px-2 py-4"
-          >
-            <div
-              class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
-            >
-              Actors
-            </div>
-            <div
-              class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
-            >
-              Robert De Niro, Al Pacino
+              guy@example.com
             </div>
             <div class="flex w-6/12 justify-end md:w-2/12">
               <PrimeButton label="Edit" icon="pi pi-pencil" text />
@@ -106,7 +52,7 @@
             <div
               class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
             >
-              Plot
+              Bio
             </div>
             <div
               class="text-surface-900 dark:text-surface-0 order-1 w-full leading-normal md:order-none md:w-8/12"
