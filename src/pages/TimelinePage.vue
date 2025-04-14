@@ -3,7 +3,7 @@
 <template>
   <main class="flex flex-1 flex-col gap-4 p-4">
     <h1 class="mb-4 text-2xl font-bold">Fil d'actualité</h1>
-    <PostItem2></PostItem2>
+    <PostItem2 />
     <!-- Affichage d'un indicateur de chargement -->
     <div
       v-if="loading"
@@ -15,7 +15,7 @@
     <section v-else class="flex flex-1 items-center justify-center">
       <!-- Message si aucun post n'est disponible -->
       <div v-if="posts.length === 0">
-        <p>Aucun post à afficher.</p>
+        <p class="text-3xl">Aucun post à afficher.</p>
       </div>
       <!-- Boucle sur la liste des posts -->
       <div v-else>

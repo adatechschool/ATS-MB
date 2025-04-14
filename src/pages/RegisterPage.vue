@@ -5,12 +5,12 @@
     <PrimeForm
       :initialValues="initialValues"
       @submit="onFormSubmit"
-      class="flex w-full flex-col gap-4 sm:w-80"
+      class="flex w-full flex-col gap-4 rounded-border bg-surface-50 p-5 shadow sm:w-120 dark:bg-surface-950"
     >
       <div class="mb-8 text-center">
         <h1 class="mb-4 text-3xl font-medium">Join us!</h1>
         <span
-          class="text-surface-600 dark:text-surface-200 leading-normal font-medium"
+          class="leading-normal font-medium text-surface-600 dark:text-surface-200"
           >Already have an account?</span
         >
         <PrimeButton
