@@ -3,6 +3,7 @@
 <template>
   <main class="flex flex-1 flex-col gap-4 p-4">
     <h1 class="mb-4 text-2xl font-bold">Fil d'actualité</h1>
+    <PostItem2></PostItem2>
     <!-- Affichage d'un indicateur de chargement -->
     <div
       v-if="loading"
@@ -28,6 +29,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import PostItem from "../components/PostItem.vue";
+import PostItem2 from "../components/PostItem2.vue";
 import ProgressSpinner from "primevue/progressspinner";
 
 interface Post {
