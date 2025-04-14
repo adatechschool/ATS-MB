@@ -9,7 +9,7 @@
       v-if="loading"
       class="flex flex-1 items-center justify-center text-center"
     >
-      <ProgressSpinner />
+      <PrimeProgressSpinner />
     </div>
     <!-- Si la récupération est terminée -->
     <section v-else class="flex flex-1 items-center justify-center">
@@ -30,7 +30,6 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import PostItem from "../components/PostItem.vue";
 import PostItem2 from "../components/PostItem2.vue";
-import ProgressSpinner from "primevue/progressspinner";
 
 interface Post {
   id: number;
