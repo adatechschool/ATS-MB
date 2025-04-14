@@ -5,7 +5,7 @@
     <PrimeMenubar :model="items">
       <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
-        <p class="mr-32 text-3xl font-bold">DevBlog</p>
+        <p class="mr-32 text-4xl font-bold">DevBlog</p>
       </template>
 
       <!-- Slot personnalisé pour chacun des items -->
@@ -42,7 +42,15 @@
             type="text"
             class="w-32 sm:w-auto"
           />
-          <PrimeAvatar label="P" class="mr-2" size="large" shape="circle" />
+          <!-- <PrimeAvatar label="P" class="mr-2" size="large" shape="circle" /> -->
+          <PrimeButton
+            icon="pi pi-user"
+            severity="secondary"
+            rounded
+            variant="outlined"
+            aria-label="User"
+            class="mr-2"
+          />
         </div>
       </template>
     </PrimeMenubar>
