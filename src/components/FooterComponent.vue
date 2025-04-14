@@ -1,7 +1,7 @@
 <!-- src\components\FooterComponent.vue -->
 
 <template>
-  <footer class="py-4">
+  <footer class="bg-surface-50 py-4 dark:bg-surface-950">
     <div class="container mx-auto text-center">
       <p>&copy; {{ currentYear }} DevBlog. Tous droits réservés.</p>
       <p>
