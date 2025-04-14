@@ -1,7 +1,7 @@
 <!-- src\pages\PageTwo.vue -->
 
 <template>
-  <div class="container mx-auto flex flex-1 flex-col p-4">
+  <main class="container mx-auto flex flex-1 flex-col p-4">
     <h1 class="mb-4 text-2xl font-bold">Page Two</h1>
     <!-- Use the WorldComponent -->
     <WorldComponent />
@@ -9,7 +9,7 @@
       <!-- PrimeVue button to navigate back to Page One -->
       <PrimeButton label="Go to Page One" @click="goToPageOne" />
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">

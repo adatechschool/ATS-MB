@@ -1,7 +1,7 @@
 <!-- src\pages\LoginPage.vue -->
 
 <template>
-  <div class="card flex flex-1 flex-col items-center justify-center">
+  <main class="card flex flex-1 flex-col items-center justify-center">
     <PrimeForm
       :initialValues="initialValues"
       @submit="onFormSubmit"
@@ -53,7 +53,7 @@
 
       <PrimeButton type="submit" severity="secondary" label="Login" />
     </PrimeForm>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,7 @@
 <!-- src\pages\TimelinePage.vue -->
 
 <template>
-  <div class="flex flex-1 flex-col gap-4 p-4">
+  <main class="flex flex-1 flex-col gap-4 p-4">
     <h1 class="mb-4 text-2xl font-bold">Fil d'actualité</h1>
     <!-- Affichage d'un indicateur de chargement -->
     <div
@@ -11,7 +11,7 @@
       <ProgressSpinner />
     </div>
     <!-- Si la récupération est terminée -->
-    <div v-else class="flex flex-1 items-center justify-center">
+    <section v-else class="flex flex-1 items-center justify-center">
       <!-- Message si aucun post n'est disponible -->
       <div v-if="posts.length === 0">
         <p>Aucun post à afficher.</p>
@@ -20,8 +20,8 @@
       <div v-else>
         <PostItem v-for="post in posts" :key="post.id" :post="post" />
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,7 @@
 <!-- src\components\PrimeNavbar.vue -->
 
 <template>
-  <div class="card">
+  <header class="card">
     <PrimeMenubar :model="items">
       <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
@@ -46,7 +46,7 @@
         </div>
       </template>
     </PrimeMenubar>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">

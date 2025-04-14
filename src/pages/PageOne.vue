@@ -1,7 +1,7 @@
 <!-- src\pages\PageOne.vue -->
 
 <template>
-  <div class="container mx-auto flex flex-1 flex-col p-4">
+  <main class="container mx-auto flex flex-1 flex-col p-4">
     <h1 class="mb-4 text-2xl font-bold">Page One</h1>
     <!-- Use the HelloComponent -->
     <HelloComponent />
@@ -9,7 +9,7 @@
       <!-- PrimeVue button to navigate to Page Two -->
       <PrimeButton label="Go to Page Two" @click="goToPageTwo" />
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
