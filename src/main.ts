@@ -18,6 +18,7 @@ import Textarea from "primevue/textarea";
 import Menubar from "primevue/menubar";
 import Badge from "primevue/badge";
 import Avatar from "primevue/avatar";
+import Chip from "primevue/chip";
 
 import App from "./App.vue";
 import router from "./router";
@@ -48,6 +49,7 @@ app.component("PrimeTextarea", Textarea);
 app.component("PrimeMenubar", Menubar);
 app.component("PrimeBadge", Badge);
 app.component("PrimeAvatar", Avatar);
+app.component("PrimeChip", Chip);
 
 app.component("PrimeNavbar", PrimeNavbar);
 app.component("FooterComponent", FooterComponent);
