@@ -1,11 +1,11 @@
 <!-- src\components\PrimeNavbar.vue -->
 
 <template>
-  <header class="card">
+  <nav class="card px-4 pt-8">
     <PrimeMenubar :model="items">
       <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
-        <p class="text-3xl font-bold">DevBlog</p>
+        <p class="mr-32 text-3xl font-bold">DevBlog</p>
       </template>
 
       <!-- Slot personnalisé pour chacun des items -->
@@ -46,7 +46,7 @@
         </div>
       </template>
     </PrimeMenubar>
-  </header>
+  </nav>
 </template>
 
 <script setup lang="ts">
@@ -62,16 +62,6 @@ const items = ref([
     command: () => router.push("/timeline"),
   },
   {
-    label: "Page One",
-    icon: "pi pi-home",
-    command: () => router.push("/page-one"),
-  },
-  {
-    label: "Page Two",
-    icon: "pi pi-file",
-    command: () => router.push("/page-two"),
-  },
-  {
     label: "Register",
     icon: "pi pi-user-plus",
     command: () => router.push("/register"),
@@ -80,6 +70,11 @@ const items = ref([
     label: "Login",
     icon: "pi pi-sign-in",
     command: () => router.push("/login"),
+  },
+  {
+    label: "Profile",
+    icon: "pi pi-user",
+    command: () => router.push("/profile"),
   },
 ]);
 </script>

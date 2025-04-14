@@ -1,7 +1,7 @@
 <!-- src\pages\ProfilePage.vue -->
 
 <template>
-  <main></main>
+  <main class="container mx-auto flex flex-1 flex-col p-4"></main>
 </template>
 
 <script setup lang="ts"></script>
