@@ -28,6 +28,8 @@ import router from "./router";
 import PrimeNavbar from "./components/PrimeNavbar.vue";
 import FooterComponent from "./components/FooterComponent.vue";
 
+import "./axios-interceptor";
+
 const app = createApp(App);
 app.use(PrimeVue, {
   theme: {

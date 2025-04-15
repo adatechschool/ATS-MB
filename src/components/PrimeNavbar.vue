@@ -65,11 +65,11 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const items = ref([
-  {
-    label: "Timeline",
-    icon: "pi pi-list",
-    command: () => router.push("/timeline"),
-  },
+  // {
+  //   label: "Timeline",
+  //   icon: "pi pi-list",
+  //   command: () => router.push("/timeline"),
+  // },
   // {
   //   label: "Register",
   //   icon: "pi pi-user-plus",

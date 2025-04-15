@@ -161,8 +161,7 @@ const onFormSubmit = async ({
         life: 3000,
       });
 
-      // Uncomment if you wish to navigate to /timeline after login
-      // router.push("/timeline");
+      router.push("/profile");
     } catch (error: unknown) {
       let errorMessage = "Login failed.";
       if (axios.isAxiosError(error) && error.response) {
