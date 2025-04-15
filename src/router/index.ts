@@ -7,7 +7,7 @@ import TimelinePage from "../pages/TimelinePage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 
 const routes = [
-  { path: "/", redirect: "/timeline" },
+  { path: "/", redirect: "/register" },
   { path: "/timeline", name: "TimelinePage", component: TimelinePage },
   { path: "/register", name: "RegisterPage", component: RegisterPage },
   { path: "/login", name: "LoginPage", component: LoginPage },

@@ -1,5 +1,4 @@
-<!-- src\pages\LoginPage.vue -->
-
+<!-- src/pages/LoginPage.vue -->
 <template>
   <main class="card flex flex-1 flex-col items-center justify-center">
     <PrimeForm
@@ -11,23 +10,24 @@
         <h1 class="mb-4 text-3xl font-medium">Welcome!</h1>
         <span
           class="leading-normal font-medium text-surface-600 dark:text-surface-200"
-          >Don't have an account?</span
         >
+          Don't have an account?
+        </span>
         <PrimeButton
           label="Create one here."
           variant="link"
           @click="onRegisterClick"
         />
       </div>
-      <!-- Champ username -->
+      <!-- Champ email -->
       <PrimeFormField
         v-slot="$field"
-        name="username"
+        name="email"
         initialValue=""
-        :resolver="zodUserNameResolver"
+        :resolver="zodEmailResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="Username" />
+        <PrimeInputText type="text" placeholder="Email" />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -93,18 +93,19 @@ const toast = useToast();
 const router = useRouter();
 const checked1 = ref(false);
 
-// Valeurs initiales du formulaire
+// Update initial form values to use "email" instead of "username"
 const initialValues = reactive({
-  username: "",
+  email: "",
   password: "",
 });
 
-// Résolveur pour le champ username via Zod
-const zodUserNameResolver = zodResolver(
-  z.string().min(1, { message: "Username is required." }),
+// Zod resolver for the email field
+const zodEmailResolver = zodResolver(
+  // Here we simply check for a nonempty string; you can further enhance it by using z.string().email(…)
+  z.string().min(1, { message: "Email is required." }),
 );
 
-// Résolveur personnalisé pour le champ password
+// Custom resolver for the password field
 const customPasswordResolver = ({ value }: { value: string }) => {
   const errors: Array<{ message: string }> = [];
   if (!value) {
@@ -113,44 +114,55 @@ const customPasswordResolver = ({ value }: { value: string }) => {
   return { errors };
 };
 
-// Handler de clic sur le bouton "Register"
+// Handler for the "Register" button click
 const onRegisterClick = () => {
   router.push("/register");
 };
 
-// Handler de soumission du formulaire
+// Form submission handler
 const onFormSubmit = async ({
   valid,
   values,
 }: {
   valid: boolean;
-  values: { username: string; password: string };
+  values: { email: string; password: string };
 }) => {
   if (valid) {
     try {
+      const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
+      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
+      const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/login/`;
       // Requête 1 : Authentification pour récupérer le token
-      const authResponse = await axios.post(
-        `${import.meta.env.VITE_DJANGO_API_URL}/api-token-auth/`,
-        {
-          username: values.username,
-          password: values.password,
-        },
-      );
-      const token = authResponse.data.token;
+      const authResponse = await axios.post(apiUrl, {
+        email: values.email,
+        password: values.password,
+      });
+
+      const { access, refresh } = authResponse.data;
+
+      // Save access token in localStorage
+      localStorage.setItem("accessToken", access);
+      // Save refresh token in session storage (which persists only for the current session)
+      sessionStorage.setItem("refreshToken", refresh);
+
+      axios.defaults.headers.common["Authorization"] = `Token ${access}`;
 
       // Requête 2 : Récupération des informations utilisateur via le token
       const accountResponse = await axios.get(
         `${import.meta.env.VITE_DJANGO_API_URL}/api/users/account/`,
-        { headers: { Authorization: `Token ${token}` } },
+        { headers: { Authorization: `Token ${access}` } },
       );
       const user = accountResponse.data;
 
       toast.add({
         severity: "success",
-        summary: `Bienvenue ${user.username} !`,
-        detail: `Email : ${user.email}`,
+        summary: `Welcome ${user.username} !`,
+        detail: `You are now logged in.`,
         life: 3000,
       });
+
+      // Uncomment if you wish to navigate to /timeline after login
+      // router.push("/timeline");
     } catch (error: unknown) {
       let errorMessage = "Login failed.";
       if (axios.isAxiosError(error) && error.response) {

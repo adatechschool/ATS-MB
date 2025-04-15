@@ -144,7 +144,9 @@ const onFormSubmit = async ({
 }) => {
   if (valid) {
     try {
-      const apiUrl = `${import.meta.env.VITE_DJANGO_API_URL}/api/auth/register/`;
+      const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
+      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
+      const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/register/`;
       const response = await axios.post(apiUrl, {
         username: values.username,
         email: values.email,
@@ -155,6 +157,8 @@ const onFormSubmit = async ({
         summary: response.data.message || "Registration successful.",
         life: 3000,
       });
+
+      router.push("/login");
     } catch (error: unknown) {
       let errorMessage = "Registration failed.";
       if (axios.isAxiosError(error) && error.response) {

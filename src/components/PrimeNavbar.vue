@@ -20,7 +20,7 @@
           />
           <span
             v-if="item.shortcut"
-            class="border-surface bg-emphasis text-muted-color ml-auto rounded border p-1 text-xs"
+            class="ml-auto rounded border border-surface p-1 text-xs bg-emphasis text-muted-color"
           >
             {{ item.shortcut }}
           </span>
@@ -66,7 +66,7 @@ const router = useRouter();
 
 const items = ref([
   {
-    label: "Fil d’actualité",
+    label: "Timeline",
     icon: "pi pi-list",
     command: () => router.push("/timeline"),
   },
