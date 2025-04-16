@@ -52,16 +52,14 @@
             class="mr-2"
             @click="onProfileClick"
           />
-          <template v-if="isLoggedIn">
-            <PrimeButton
-              icon="pi pi-sign-out"
-              severity="secondary"
-              rounded
-              variant="outlined"
-              aria-label="Logout"
-              @click="logout"
-            />
-          </template>
+          <PrimeButton
+            icon="pi pi-sign-out"
+            severity="secondary"
+            rounded
+            variant="outlined"
+            aria-label="Logout"
+            @click="logout"
+          />
         </div>
       </template>
     </PrimeMenubar>
@@ -75,26 +73,16 @@ import axios from "axios";
 
 const router = useRouter();
 
-const isLoggedIn = computed(() => {
-  return Boolean(localStorage.getItem("accessToken"));
-});
-
 const menuItems = computed(() => {
-  if (isLoggedIn.value) {
-    return [
-      {
-        label: "Profile",
-        icon: "pi pi-user",
-        command: () => router.push("/profile"),
-      },
-    ];
-  } else {
-    // For example, you might want to list nothing or a landing page option.
-    return [];
-  }
+  return [
+    {
+      label: "Profile",
+      icon: "pi pi-user",
+      command: () => router.push("/profile"),
+    },
+  ];
 });
 
-// Handler de clic sur le bouton "Profile"
 const onProfileClick = () => {
   router.push("/login");
 };
@@ -103,11 +91,21 @@ async function logout() {
   try {
     const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
 
+    const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
+    const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
+
     const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
     const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
 
+    await axios.post(
+      `${authApiBaseUrl}/api/auth/logout/`,
+      {},
+      { withCredentials: true },
+    );
+
     const currentSession = await axios.get(
       `${sessionApiBaseUrl}/api/sessions/current/`,
+      { withCredentials: true },
     );
     const sessionId = currentSession.data.session_id;
 
@@ -117,7 +115,6 @@ async function logout() {
   } catch (error) {
     console.error("Error during logout:", error);
   }
-  localStorage.removeItem("accessToken");
   router.push("/login");
 }
 </script>

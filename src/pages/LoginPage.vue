@@ -88,7 +88,6 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
-import parseJwt from "../helpers/parseJwt";
 
 const toast = useToast();
 const router = useRouter();
@@ -129,12 +128,6 @@ const onFormSubmit = async ({
       const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
       const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
 
-      const sessionServicePort = `${import.meta.env.VITE_SESSION_SERVICE_PORT}`;
-      const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
-
-      const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
-      const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
       const authResponse = await axios.post(
         `${authApiBaseUrl}/api/auth/login/`,
         {
@@ -143,44 +136,10 @@ const onFormSubmit = async ({
         },
       );
 
-      const { access, refresh } = authResponse.data;
-
-      localStorage.setItem("accessToken", access);
-
-      const accessPayload = parseJwt(access);
-      const userId = accessPayload?.user_id || accessPayload?.sub;
-      if (!userId) {
-        throw new Error(
-          "User ID could not be determined from the access token.",
-        );
-      }
-
-      const refreshPayload = parseJwt(refresh);
-      if (!refreshPayload || !refreshPayload.exp) {
-        throw new Error("Refresh token expiration could not be determined.");
-      }
-
-      const refreshExpiration = new Date(refreshPayload.exp * 1000);
-
-      const sessionResponse = await axios.post(
-        `${sessionApiBaseUrl}/api/sessions/add/`,
-        {
-          user_id: userId,
-          token: refresh,
-          expires_at: refreshExpiration.toISOString(),
-        },
-      );
-
-      if (sessionResponse.status === 201) {
-        const accountResponse = await axios.get(
-          `${accountApiBaseUrl}/api/accounts/get/${userId}/`,
-          { headers: { Authorization: `Token ${access}` } },
-        );
-
-        const user = accountResponse.data;
+      if (authResponse.status === 200) {
         toast.add({
           severity: "success",
-          summary: `Welcome ${user.username} !`,
+          summary: `Login successful!`,
           detail: `You are now logged in.`,
           life: 3000,
         });

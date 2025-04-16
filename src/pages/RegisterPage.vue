@@ -26,7 +26,11 @@
         :resolver="zodUserNameResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="Username" />
+        <PrimeInputText
+          type="text"
+          placeholder="Username"
+          autocomplete="username"
+        />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -43,7 +47,7 @@
         :resolver="yupEmailResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="Email" />
+        <PrimeInputText type="text" placeholder="Email" autocomplete="email" />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -63,6 +67,7 @@
         <PrimePassword
           type="text"
           placeholder="Password"
+          autocomplete="new-password"
           :feedback="false"
           toggleMask
           fluid
