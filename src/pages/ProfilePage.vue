@@ -163,6 +163,7 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import formatDate from "../helpers/dateFormatting";
+import router from "../router";
 
 // Helper function to decode a JWT token
 function parseJwt(token: string) {
@@ -239,6 +240,15 @@ const fetchAccountInfo = async () => {
       ? accountInfo.created_at.substring(0, 10)
       : "";
   } catch (error: unknown) {
+    // If the error indicates that the token is invalid, let the interceptor handle the redirection.
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.data?.code === "token_not_valid"
+    ) {
+      // Optionally, you may force a redirect here as well.
+      router.push("/login");
+      return;
+    }
     console.error("Error fetching account info:", error);
   }
 };

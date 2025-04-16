@@ -4,6 +4,7 @@ import "primeicons/primeicons.css";
 import { createApp } from "vue";
 
 import PrimeVue from "primevue/config";
+import Ripple from "primevue/ripple";
 import Aura from "@primeuix/themes/aura";
 
 import ToastService from "primevue/toastservice";
@@ -39,6 +40,7 @@ app.use(PrimeVue, {
     },
   },
 });
+app.directive("ripple", Ripple);
 
 app.use(ToastService);
 

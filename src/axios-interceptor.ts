@@ -33,12 +33,18 @@ axios.interceptors.response.use(
           localStorage.removeItem("accessToken");
           sessionStorage.removeItem("sessionId");
           router.push("/login");
-          return Promise.reject(refreshError);
+          return Promise.reject(
+            refreshError instanceof Error
+              ? refreshError
+              : new Error(String(refreshError)),
+          );
         }
       } else {
         router.push("/login");
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(
+      error instanceof Error ? error : new Error(String(error)),
+    );
   },
 );
