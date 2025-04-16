@@ -94,19 +94,15 @@ const toast = useToast();
 const router = useRouter();
 const checked1 = ref(false);
 
-// Update initial form values to use "email" instead of "username"
 const initialValues = reactive({
   email: "",
   password: "",
 });
 
-// Zod resolver for the email field
 const zodEmailResolver = zodResolver(
-  // Here we simply check for a nonempty string; you can further enhance it by using z.string().email(…)
   z.string().min(1, { message: "Email is required." }),
 );
 
-// Custom resolver for the password field
 const customPasswordResolver = ({ value }: { value: string }) => {
   const errors: Array<{ message: string }> = [];
   if (!value) {
@@ -115,12 +111,10 @@ const customPasswordResolver = ({ value }: { value: string }) => {
   return { errors };
 };
 
-// Handler for the "Register" button click
 const onRegisterClick = () => {
   router.push("/register");
 };
 
-// Form submission handler
 const onFormSubmit = async ({
   valid,
   values,
@@ -131,11 +125,18 @@ const onFormSubmit = async ({
   if (valid) {
     try {
       const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
-      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
 
-      // Requête 1 : Authentification pour récupérer le token
+      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
+      const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
+
+      const sessionServicePort = `${import.meta.env.VITE_SESSION_SERVICE_PORT}`;
+      const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
+
+      const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
+      const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
+
       const authResponse = await axios.post(
-        `${apiBaseUrl}:${authServicePort}/api/auth/login/`,
+        `${authApiBaseUrl}/api/auth/login/`,
         {
           email: values.email,
           password: values.password,
@@ -144,43 +145,36 @@ const onFormSubmit = async ({
 
       const { access, refresh } = authResponse.data;
 
-      // Save access token in localStorage
       localStorage.setItem("accessToken", access);
 
-      // Extract user id from the token (adjust parsing as needed)
-      const payload = parseJwt(access);
-      const userId = payload?.user_id || payload?.sub;
+      const accessPayload = parseJwt(access);
+      const userId = accessPayload?.user_id || accessPayload?.sub;
       if (!userId) {
         throw new Error(
           "User ID could not be determined from the access token.",
         );
       }
 
-      // Extract refresh token expiration from the refresh token payload
       const refreshPayload = parseJwt(refresh);
       if (!refreshPayload || !refreshPayload.exp) {
         throw new Error("Refresh token expiration could not be determined.");
       }
-      // Convert the Unix timestamp (in seconds) to a JavaScript Date object
+
       const refreshExpiration = new Date(refreshPayload.exp * 1000);
 
-      // NOTE: Ensure that VITE_SESSION_SERVICE_PORT is defined in your .env file.
-      const sessionServicePort = `${import.meta.env.VITE_SESSION_SERVICE_PORT}`;
-      const sessionApiUrl = `${apiBaseUrl}:${sessionServicePort}/api/sessions/add/`;
-
-      const sessionResponse = await axios.post(sessionApiUrl, {
-        user_id: userId,
-        token: refresh,
-        expires_at: refreshExpiration.toISOString(),
-      });
-      // Assume the response returns the created session record including session_id.
+      const sessionResponse = await axios.post(
+        `${sessionApiBaseUrl}/api/sessions/add/`,
+        {
+          user_id: userId,
+          token: refresh,
+          expires_at: refreshExpiration.toISOString(),
+        },
+      );
       const sessionRecord = sessionResponse.data;
-      // Save the session ID in client storage to reference during refresh.
       sessionStorage.setItem("sessionId", sessionRecord.session_id);
 
-      // Requête 2 : Récupération des informations utilisateur via le token
       const accountResponse = await axios.get(
-        `${import.meta.env.VITE_DJANGO_API_URL}/api/users/account/`,
+        `${accountApiBaseUrl}/api/accounts/get/${userId}/`,
         { headers: { Authorization: `Token ${access}` } },
       );
 

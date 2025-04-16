@@ -2,7 +2,7 @@
 
 <template>
   <nav class="card px-4 pt-8">
-    <PrimeMenubar :model="items">
+    <PrimeMenubar :model="menuItems">
       <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
         <p class="mr-32 text-4xl font-bold">DevBlog</p>
@@ -37,11 +37,11 @@
       <!-- Slot de droite : zone de recherche et avatar -->
       <template #end>
         <div class="flex items-center gap-2">
-          <PrimeInputText
+          <!-- <PrimeInputText
             placeholder="Search"
             type="text"
             class="w-32 sm:w-auto"
-          />
+          /> -->
           <!-- <PrimeAvatar label="P" class="mr-2" size="large" shape="circle" /> -->
           <PrimeButton
             icon="pi pi-user"
@@ -52,14 +52,16 @@
             class="mr-2"
             @click="onProfileClick"
           />
-          <PrimeButton
-            icon="pi pi-sign-out"
-            severity="secondary"
-            rounded
-            variant="outlined"
-            aria-label="Logout"
-            @click="logout"
-          />
+          <template v-if="isLoggedIn">
+            <PrimeButton
+              icon="pi pi-sign-out"
+              severity="secondary"
+              rounded
+              variant="outlined"
+              aria-label="Logout"
+              @click="logout"
+            />
+          </template>
         </div>
       </template>
     </PrimeMenubar>
@@ -67,24 +69,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
 const router = useRouter();
 
-const items = ref([
-  // {
-  //   label: "Timeline",
-  //   icon: "pi pi-list",
-  //   command: () => router.push("/timeline"),
-  // },
-  {
-    label: "Profile",
-    icon: "pi pi-user",
-    command: () => router.push("/profile"),
-  },
-]);
+const isLoggedIn = computed(() => {
+  return Boolean(localStorage.getItem("accessToken"));
+});
+
+const menuItems = computed(() => {
+  if (isLoggedIn.value) {
+    return [
+      {
+        label: "Profile",
+        icon: "pi pi-user",
+        command: () => router.push("/profile"),
+      },
+    ];
+  } else {
+    // For example, you might want to list nothing or a landing page option.
+    return [];
+  }
+});
 
 // Handler de clic sur le bouton "Profile"
 const onProfileClick = () => {
