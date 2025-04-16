@@ -100,20 +100,24 @@ const onProfileClick = () => {
 };
 
 async function logout() {
-  const sessionId = sessionStorage.getItem("sessionId");
-  if (sessionId) {
-    try {
-      const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-      const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
-      await axios.delete(
-        `${apiBaseUrl}:${sessionServicePort}/api/sessions/${sessionId}/`,
-      );
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+  try {
+    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+
+    const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
+    const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
+
+    const currentSession = await axios.get(
+      `${sessionApiBaseUrl}/api/sessions/current/`,
+    );
+    const sessionId = currentSession.data.session_id;
+
+    await axios.delete(
+      `${sessionApiBaseUrl}/api/sessions/delete/${sessionId}/`,
+    );
+  } catch (error) {
+    console.error("Error during logout:", error);
   }
   localStorage.removeItem("accessToken");
-  sessionStorage.removeItem("sessionId");
   router.push("/login");
 }
 </script>

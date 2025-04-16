@@ -16,10 +16,10 @@ axios.interceptors.response.use(
       if (sessionId) {
         try {
           const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-          const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
-          // Make a refresh request with the session id.
+          const sessionServicePort = `${import.meta.env.VITE_SESSION_SERVICE_PORT}`;
+          const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
           const response = await axios.post(
-            `${apiBaseUrl}:${sessionServicePort}/api/sessions/refresh/`,
+            `${sessionApiBaseUrl}/api/sessions/refresh/`,
             { session_id: sessionId },
           );
           const newAccessToken = response.data.access;

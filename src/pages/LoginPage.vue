@@ -170,22 +170,22 @@ const onFormSubmit = async ({
           expires_at: refreshExpiration.toISOString(),
         },
       );
-      const sessionRecord = sessionResponse.data;
-      sessionStorage.setItem("sessionId", sessionRecord.session_id);
 
-      const accountResponse = await axios.get(
-        `${accountApiBaseUrl}/api/accounts/get/${userId}/`,
-        { headers: { Authorization: `Token ${access}` } },
-      );
+      if (sessionResponse.status === 201) {
+        const accountResponse = await axios.get(
+          `${accountApiBaseUrl}/api/accounts/get/${userId}/`,
+          { headers: { Authorization: `Token ${access}` } },
+        );
 
-      const user = accountResponse.data;
-      toast.add({
-        severity: "success",
-        summary: `Welcome ${user.username} !`,
-        detail: `You are now logged in.`,
-        life: 3000,
-      });
-      router.push("/profile");
+        const user = accountResponse.data;
+        toast.add({
+          severity: "success",
+          summary: `Welcome ${user.username} !`,
+          detail: `You are now logged in.`,
+          life: 3000,
+        });
+        router.push("/profile");
+      }
     } catch (error: unknown) {
       let errorMessage = "Login failed.";
       if (axios.isAxiosError(error) && error.response) {
