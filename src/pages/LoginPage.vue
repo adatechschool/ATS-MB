@@ -88,6 +88,7 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
+import parseJwt from "../helpers/parseJwt";
 
 const toast = useToast();
 const router = useRouter();
@@ -131,36 +132,65 @@ const onFormSubmit = async ({
     try {
       const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
       const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
-      const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/login/`;
+
       // Requête 1 : Authentification pour récupérer le token
-      const authResponse = await axios.post(apiUrl, {
-        email: values.email,
-        password: values.password,
-      });
+      const authResponse = await axios.post(
+        `${apiBaseUrl}:${authServicePort}/api/auth/login/`,
+        {
+          email: values.email,
+          password: values.password,
+        },
+      );
 
       const { access, refresh } = authResponse.data;
 
       // Save access token in localStorage
       localStorage.setItem("accessToken", access);
-      // Save refresh token in session storage (which persists only for the current session)
-      sessionStorage.setItem("refreshToken", refresh);
 
-      axios.defaults.headers.common["Authorization"] = `Token ${access}`;
+      // Extract user id from the token (adjust parsing as needed)
+      const payload = parseJwt(access);
+      const userId = payload?.user_id || payload?.sub;
+      if (!userId) {
+        throw new Error(
+          "User ID could not be determined from the access token.",
+        );
+      }
+
+      // Extract refresh token expiration from the refresh token payload
+      const refreshPayload = parseJwt(refresh);
+      if (!refreshPayload || !refreshPayload.exp) {
+        throw new Error("Refresh token expiration could not be determined.");
+      }
+      // Convert the Unix timestamp (in seconds) to a JavaScript Date object
+      const refreshExpiration = new Date(refreshPayload.exp * 1000);
+
+      // NOTE: Ensure that VITE_SESSION_SERVICE_PORT is defined in your .env file.
+      const sessionServicePort = `${import.meta.env.VITE_SESSION_SERVICE_PORT}`;
+      const sessionApiUrl = `${apiBaseUrl}:${sessionServicePort}/api/sessions/add/`;
+
+      const sessionResponse = await axios.post(sessionApiUrl, {
+        user_id: userId,
+        token: refresh,
+        expires_at: refreshExpiration.toISOString(),
+      });
+      // Assume the response returns the created session record including session_id.
+      const sessionRecord = sessionResponse.data;
+      // Save the session ID in client storage to reference during refresh.
+      sessionStorage.setItem("sessionId", sessionRecord.session_id);
 
       // Requête 2 : Récupération des informations utilisateur via le token
       const accountResponse = await axios.get(
         `${import.meta.env.VITE_DJANGO_API_URL}/api/users/account/`,
         { headers: { Authorization: `Token ${access}` } },
       );
-      const user = accountResponse.data;
 
+      const user = accountResponse.data;
       toast.add({
         severity: "success",
         summary: `Welcome ${user.username} !`,
         detail: `You are now logged in.`,
         life: 3000,
       });
-
       router.push("/profile");
     } catch (error: unknown) {
       let errorMessage = "Login failed.";

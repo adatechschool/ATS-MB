@@ -63,7 +63,7 @@
         </div>
 
         <div class="mt-2 mb-8 text-surface-500 dark:text-surface-300">
-          Joined on {{ joinDate }}
+          Joined on {{ formattedJoinDate }}
         </div>
         <ul class="m-0 list-none p-0">
           <!-- Email Row -->
@@ -159,9 +159,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
+import formatDate from "../helpers/dateFormatting";
 
 // Helper function to decode a JWT token
 function parseJwt(token: string) {
@@ -216,6 +217,11 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const toast = useToast();
 const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
 const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
+
+// Computed property for the formatted join date
+const formattedJoinDate = computed(() => {
+  return joinDate.value ? formatDate(joinDate.value) : "";
+});
 
 // Fetch account info from the API on component mount.
 const fetchAccountInfo = async () => {

@@ -52,6 +52,14 @@
             class="mr-2"
             @click="onProfileClick"
           />
+          <PrimeButton
+            icon="pi pi-sign-out"
+            severity="secondary"
+            rounded
+            variant="outlined"
+            aria-label="Logout"
+            @click="logout"
+          />
         </div>
       </template>
     </PrimeMenubar>
@@ -61,6 +69,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const router = useRouter();
 
@@ -69,16 +78,6 @@ const items = ref([
   //   label: "Timeline",
   //   icon: "pi pi-list",
   //   command: () => router.push("/timeline"),
-  // },
-  // {
-  //   label: "Register",
-  //   icon: "pi pi-user-plus",
-  //   command: () => router.push("/register"),
-  // },
-  // {
-  //   label: "Login",
-  //   icon: "pi pi-sign-in",
-  //   command: () => router.push("/login"),
   // },
   {
     label: "Profile",
@@ -91,4 +90,22 @@ const items = ref([
 const onProfileClick = () => {
   router.push("/login");
 };
+
+async function logout() {
+  const sessionId = sessionStorage.getItem("sessionId");
+  if (sessionId) {
+    try {
+      const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+      const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
+      await axios.delete(
+        `${apiBaseUrl}:${sessionServicePort}/api/sessions/${sessionId}/`,
+      );
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+  localStorage.removeItem("accessToken");
+  sessionStorage.removeItem("sessionId");
+  router.push("/login");
+}
 </script>
