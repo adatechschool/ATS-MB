@@ -94,23 +94,10 @@ async function logout() {
     const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
     const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
 
-    const sessionServicePort = import.meta.env.VITE_SESSION_SERVICE_PORT;
-    const sessionApiBaseUrl = `${apiBaseUrl}:${sessionServicePort}`;
-
     await axios.post(
       `${authApiBaseUrl}/api/auth/logout/`,
       {},
       { withCredentials: true },
-    );
-
-    const currentSession = await axios.get(
-      `${sessionApiBaseUrl}/api/sessions/current/`,
-      { withCredentials: true },
-    );
-    const sessionId = currentSession.data.session_id;
-
-    await axios.delete(
-      `${sessionApiBaseUrl}/api/sessions/delete/${sessionId}/`,
     );
   } catch (error) {
     console.error("Error during logout:", error);
