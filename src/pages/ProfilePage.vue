@@ -22,7 +22,7 @@
             </template>
             <template v-else>
               <PrimeAvatar
-                label="P"
+                :label="avatarLetter"
                 class="mr-2 cursor-pointer"
                 size="xlarge"
                 shape="circle"
@@ -194,6 +194,7 @@ const joinDate = ref("");
 const profilePicture = ref("");
 const isEditingEmail = ref(false);
 const isEditingBio = ref(false);
+const avatarLetter = computed(() => username.value.charAt(0).toUpperCase());
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
