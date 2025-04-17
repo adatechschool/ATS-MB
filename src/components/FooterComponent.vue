@@ -11,8 +11,8 @@
           target="_blank"
           class="underline hover:text-gray-400"
         >
-          github.com/adatechschool/ATS-MB
-        </a>
+          github.com/adatechschool/ATS-MB</a
+        >
         pour le front-end et
         <a
           href="https://github.com/adatechschool/MBB"
