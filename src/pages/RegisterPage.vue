@@ -27,9 +27,10 @@
         class="flex flex-col gap-1"
       >
         <PrimeInputText
+          v-bind="$field"
           type="text"
           placeholder="Username"
-          autocomplete="username"
+          autocomplete
         />
         <PrimeMessage
           v-if="$field?.invalid"
@@ -47,7 +48,12 @@
         :resolver="yupEmailResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="Email" autocomplete="email" />
+        <PrimeInputText
+          v-bind="$field"
+          type="text"
+          placeholder="Email"
+          autocomplete
+        />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -65,9 +71,10 @@
         class="flex flex-col gap-1"
       >
         <PrimePassword
+          v-bind="$field"
           type="text"
           placeholder="Password"
-          autocomplete="new-password"
+          autocomplete
           :feedback="false"
           toggleMask
           fluid
