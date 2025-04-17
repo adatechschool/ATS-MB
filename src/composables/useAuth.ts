@@ -4,6 +4,7 @@ import { useUserStore } from "../stores/userStore";
 import axios from "axios";
 
 const isAuthenticated = ref(false);
+const bootstrapped = ref(false);
 
 const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
 const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
@@ -26,16 +27,18 @@ export function useAuth() {
         joinDate: data.created_at?.substring(0, 10),
       });
       isAuthenticated.value = true;
-      return true;
     } catch {
       isAuthenticated.value = false;
-      return false;
+      userStore.clearUser();
+    } finally {
+      bootstrapped.value = true;
     }
+    return isAuthenticated.value;
   }
 
   function setAuthenticated(val: boolean) {
     isAuthenticated.value = val;
   }
 
-  return { isAuthenticated, fetchAuth, setAuthenticated };
+  return { isAuthenticated, bootstrapped, fetchAuth, setAuthenticated };
 }

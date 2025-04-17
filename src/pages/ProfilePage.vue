@@ -11,9 +11,9 @@
         </div>
         <div class="flex w-full items-center gap-4">
           <div class="group relative">
-            <template v-if="profilePicture">
+            <template v-if="userStore.profilePicture">
               <PrimeAvatar
-                :image="profilePicture"
+                :image="userStore.profilePicture"
                 class="mr-2 cursor-pointer"
                 size="xlarge"
                 shape="circle"
@@ -22,7 +22,7 @@
             </template>
             <template v-else>
               <PrimeAvatar
-                :label="avatarLetter"
+                :label="userStore.avatarLetter"
                 class="mr-2 cursor-pointer"
                 size="xlarge"
                 shape="circle"
@@ -44,12 +44,12 @@
             />
           </div>
           <div class="flex flex-1 flex-col gap-0.5">
-            <h1 class="text-xl font-bold">{{ username }}</h1>
+            <h1 class="text-xl font-bold">{{ userStore.username }}</h1>
           </div>
         </div>
 
         <div class="mt-2 mb-8 text-surface-500 dark:text-surface-300">
-          Joined on {{ formattedJoinDate }}
+          Joined on {{ formatDate(userStore.joinDate) }}
         </div>
         <ul class="m-0 list-none p-0">
           <li
@@ -65,13 +65,13 @@
             >
               <template v-if="isEditingEmail">
                 <PrimeInputText
-                  v-model="email"
+                  v-model="userStore.email"
                   placeholder="Email"
                   type="text"
                 />
               </template>
               <template v-else>
-                {{ email }}
+                {{ userStore.email }}
               </template>
             </div>
             <div class="flex w-6/12 justify-end md:w-2/12">
@@ -106,7 +106,7 @@
             >
               <template v-if="isEditingBio">
                 <PrimeTextarea
-                  v-model="bio"
+                  v-model="userStore.bio"
                   autoResize
                   placeholder="Bio"
                   rows="3"
@@ -114,7 +114,7 @@
                 />
               </template>
               <template v-else>
-                {{ bio }}
+                {{ userStore.bio }}
               </template>
             </div>
             <div class="flex w-6/12 justify-end md:w-2/12">
@@ -171,7 +171,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import formatDate from "../helpers/dateFormatting";
@@ -185,21 +185,11 @@ const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 const toast = useToast();
 const userStore = useUserStore();
 
-const profilePicture = userStore.profilePicture;
-const avatarLetter = computed(() => userStore.avatarLetter);
-const username = userStore.username;
-const email = userStore.email;
-const bio = userStore.bio;
-
 const isEditingEmail = ref(false);
 const isEditingBio = ref(false);
 const isDeletionDialogVisible = ref(false);
 
 const fileInput = ref<HTMLInputElement | null>(null);
-
-const formattedJoinDate = computed(() => {
-  return userStore.joinDate ? formatDate(userStore.joinDate) : "";
-});
 
 const fetchAccountInfo = async () => {
   try {

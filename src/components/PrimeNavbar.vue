@@ -16,12 +16,6 @@
             :class="{ 'ml-auto': !root, 'ml-2': root }"
             :value="item.badge"
           />
-          <span
-            v-if="item.shortcut"
-            class="ml-auto rounded border border-surface p-1 text-xs bg-emphasis text-muted-color"
-          >
-            {{ item.shortcut }}
-          </span>
           <i
             v-if="hasSubmenu"
             :class="[
@@ -34,8 +28,24 @@
 
       <template #end>
         <div class="flex items-center gap-2">
+          <PrimeAvatar
+            v-if="isAuthenticated && userStore.profilePicture"
+            :image="userStore.profilePicture"
+            class="mr-2 cursor-pointer"
+            size="large"
+            shape="circle"
+            @click="onProfileClick"
+          />
+          <PrimeAvatar
+            v-else-if="isAuthenticated"
+            :label="userStore.avatarLetter"
+            class="mr-2 cursor-pointer"
+            size="large"
+            shape="circle"
+            @click="onProfileClick"
+          />
           <PrimeButton
-            v-if="!isAuthenticated"
+            v-else
             icon="pi pi-user"
             severity="secondary"
             rounded
@@ -43,14 +53,6 @@
             aria-label="Login"
             class="mr-2"
             @click="onLoginButtonClick"
-          />
-          <PrimeAvatar
-            v-else
-            :label="avatarLetter"
-            class="mr-2 cursor-pointer"
-            size="large"
-            shape="circle"
-            @click="onProfileClick"
           />
           <PrimeButton
             v-if="isAuthenticated"
@@ -81,14 +83,12 @@ const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
 const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 
 const router = useRouter();
-const { isAuthenticated, setAuthenticated } = useAuth();
+const { isAuthenticated, setAuthenticated, fetchAuth } = useAuth();
 const userStore = useUserStore();
 
 const menuItems = computed(() => {
   return [];
 });
-
-const avatarLetter = computed(() => userStore.avatarLetter);
 
 async function fetchCurrentUser() {
   try {
@@ -125,6 +125,8 @@ async function logout() {
   } catch (error) {
     console.error("Error during logout:", error);
   }
+  setAuthenticated(false);
+  await fetchAuth();
   router.push("/login");
 }
 

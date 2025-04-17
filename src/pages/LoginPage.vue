@@ -61,19 +61,6 @@
         </PrimeMessage>
       </PrimeFormField>
 
-      <div class="mb-12 flex items-center justify-between">
-        <div class="flex items-center">
-          <PrimeCheckbox
-            id="rememberme1"
-            v-model="checked1"
-            :binary="true"
-            class="mr-2"
-          />
-          <label for="rememberme1">Remember me</label>
-        </div>
-        <PrimeButton label="Forgot password?" variant="link" />
-      </div>
-
       <PrimeButton type="submit" severity="secondary" label="Login" />
     </PrimeForm>
   </main>
@@ -81,7 +68,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
@@ -90,8 +77,7 @@ import { useAuth } from "../composables/useAuth";
 
 const toast = useToast();
 const router = useRouter();
-const checked1 = ref(false);
-const { setAuthenticated } = useAuth();
+const { setAuthenticated, fetchAuth } = useAuth();
 
 const initialValues = reactive({
   email: "",
@@ -144,6 +130,8 @@ const onFormSubmit = async ({
           detail: `You are now logged in.`,
           life: 3000,
         });
+        setAuthenticated(true);
+        await fetchAuth();
         router.push("/profile");
       }
     } catch (error: unknown) {
