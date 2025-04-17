@@ -47,9 +47,10 @@
             variant="outlined"
             aria-label="User"
             class="mr-2"
-            @click="onProfileClick"
+            @click="onLoginButtonClick"
           />
           <PrimeButton
+            v-if="isAuthenticated"
             icon="pi pi-sign-out"
             severity="secondary"
             rounded
@@ -67,8 +68,10 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { useAuth } from "../composables/useAuth";
 
 const router = useRouter();
+const { isAuthenticated, setAuthenticated } = useAuth();
 
 const menuItems = computed(() => {
   return [
@@ -80,7 +83,7 @@ const menuItems = computed(() => {
   ];
 });
 
-const onProfileClick = () => {
+const onLoginButtonClick = () => {
   router.push("/login");
 };
 
@@ -96,6 +99,7 @@ async function logout() {
       {},
       { withCredentials: true },
     );
+    setAuthenticated(false);
   } catch (error) {
     console.error("Error during logout:", error);
   }

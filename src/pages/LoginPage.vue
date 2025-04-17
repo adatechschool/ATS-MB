@@ -88,10 +88,12 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
+import { useAuth } from "../composables/useAuth";
 
 const toast = useToast();
 const router = useRouter();
 const checked1 = ref(false);
+const { setAuthenticated } = useAuth();
 
 const initialValues = reactive({
   email: "",
@@ -137,6 +139,7 @@ const onFormSubmit = async ({
       );
 
       if (authResponse.status === 200) {
+        setAuthenticated(true);
         toast.add({
           severity: "success",
           summary: `Login successful!`,
