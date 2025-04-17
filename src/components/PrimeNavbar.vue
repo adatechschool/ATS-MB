@@ -34,20 +34,23 @@
 
       <template #end>
         <div class="flex items-center gap-2">
-          <!-- <PrimeInputText
-            placeholder="Search"
-            type="text"
-            class="w-32 sm:w-auto"
-          /> -->
-          <!-- <PrimeAvatar label="P" class="mr-2" size="large" shape="circle" /> -->
           <PrimeButton
+            v-if="!isAuthenticated"
             icon="pi pi-user"
             severity="secondary"
             rounded
             variant="outlined"
-            aria-label="User"
+            aria-label="Login"
             class="mr-2"
             @click="onLoginButtonClick"
+          />
+          <PrimeAvatar
+            v-else
+            :label="avatarLetter"
+            class="mr-2 cursor-pointer"
+            size="large"
+            shape="circle"
+            @click="onProfileClick"
           />
           <PrimeButton
             v-if="isAuthenticated"
@@ -65,26 +68,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useAuth } from "../composables/useAuth";
 
 const router = useRouter();
 const { isAuthenticated, setAuthenticated } = useAuth();
+const username = ref("");
 
 const menuItems = computed(() => {
-  return [
-    {
-      label: "Profile",
-      icon: "pi pi-user",
-      command: () => router.push("/profile"),
-    },
-  ];
+  return [];
 });
+
+const avatarLetter = computed(() => username.value.charAt(0).toUpperCase());
 
 const onLoginButtonClick = () => {
   router.push("/login");
+};
+
+const onProfileClick = () => {
+  router.push("/profile");
 };
 
 async function logout() {
@@ -105,4 +109,32 @@ async function logout() {
   }
   router.push("/login");
 }
+
+async function fetchCurrentUser() {
+  try {
+    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+    const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
+    const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
+
+    const response = await axios.get(
+      `${accountApiBaseUrl}/api/accounts/get/account/`,
+      {
+        withCredentials: true,
+      },
+    );
+    if (response.status === 200 && response.data.username) {
+      username.value = response.data.username;
+      setAuthenticated(true);
+    } else {
+      setAuthenticated(false);
+      username.value = "";
+    }
+  } catch (error) {
+    setAuthenticated(false);
+    username.value = "";
+    console.error("Error fetching current user:", error);
+  }
+}
+
+onMounted(fetchCurrentUser);
 </script>
