@@ -23,13 +23,18 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
-  const { isAuthenticated } = useAuth();
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    next("/login");
-  } else {
-    next();
+router.beforeEach(async (to, _, next) => {
+  const { isAuthenticated, fetchAuth } = useAuth();
+
+  if (to.meta.requiresAuth) {
+    if (!isAuthenticated.value) {
+      const ok = await fetchAuth();
+      return ok ? next() : next("/login");
+    }
+    return next();
   }
+
+  next();
 });
 
 export default router;
