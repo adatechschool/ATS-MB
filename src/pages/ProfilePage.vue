@@ -45,16 +45,6 @@
           </div>
           <div class="flex flex-1 flex-col gap-0.5">
             <h1 class="text-xl font-bold">{{ username }}</h1>
-            <div class="flex gap-8">
-              <div class="gap-0.0625 flex flex-col text-sm">
-                <p class="font-bold">Followers</p>
-                <p>100</p>
-              </div>
-              <div class="gap-0.0625 flex flex-col text-sm">
-                <p class="font-bold">Followings</p>
-                <p>100</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -186,25 +176,110 @@ import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import formatDate from "../helpers/dateFormatting";
 import router from "../router";
-
-const email = ref("");
-const bio = ref("");
-const username = ref("");
-const joinDate = ref("");
-const profilePicture = ref("");
-const isEditingEmail = ref(false);
-const isEditingBio = ref(false);
-const avatarLetter = computed(() => username.value.charAt(0).toUpperCase());
-
-const fileInput = ref<HTMLInputElement | null>(null);
-
-const toast = useToast();
+import { useUserStore } from "../stores/userStore";
 
 const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
 const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
 const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 
+const toast = useToast();
+const userStore = useUserStore();
+
+const profilePicture = userStore.profilePicture;
+const avatarLetter = computed(() => userStore.avatarLetter);
+const username = userStore.username;
+const email = userStore.email;
+const bio = userStore.bio;
+
+const isEditingEmail = ref(false);
+const isEditingBio = ref(false);
 const isDeletionDialogVisible = ref(false);
+
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const formattedJoinDate = computed(() => {
+  return userStore.joinDate ? formatDate(userStore.joinDate) : "";
+});
+
+const fetchAccountInfo = async () => {
+  try {
+    const { data } = await axios.get(
+      `${accountApiBaseUrl}/api/accounts/get/account/`,
+    );
+    userStore.setUser({
+      username: data.username,
+      email: data.email,
+      bio: data.bio,
+      profilePicture: data.profile_picture,
+      joinDate: data.created_at?.substring(0, 10),
+    });
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.data?.code === "token_not_valid"
+    ) {
+      router.push("/login");
+      return;
+    }
+    console.error("Error fetching account info:", error);
+  }
+};
+
+const updateAccount = async () => {
+  try {
+    const response = await axios.put(
+      `${accountApiBaseUrl}/api/accounts/update/account/`,
+      {
+        username: userStore.username,
+        email: userStore.email,
+        bio: userStore.bio,
+        profile_picture: userStore.profilePicture,
+      },
+    );
+    userStore.setUser(response.data);
+    toast.add({
+      severity: "success",
+      summary: "Account Updated",
+      detail: "Your account information has been updated successfully.",
+      life: 3000,
+    });
+  } catch (error: unknown) {
+    toast.add({
+      severity: "error",
+      summary: "Update Failed",
+      detail: axios.isAxiosError(error)
+        ? error.response?.data?.message || error.message
+        : "Update failed.",
+      life: 3000,
+    });
+  }
+};
+
+const saveEmail = async () => {
+  await updateAccount();
+  isEditingEmail.value = false;
+};
+
+const saveBio = async () => {
+  await updateAccount();
+  isEditingBio.value = false;
+};
+
+function triggerFileInput() {
+  fileInput.value?.click();
+}
+
+function onProfilePictureSelected(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      userStore.profilePicture = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+}
 
 function confirmDeletion() {
   isDeletionDialogVisible.value = true;
@@ -212,10 +287,6 @@ function confirmDeletion() {
 
 async function deleteAccount() {
   try {
-    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-    const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
-    const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
     await axios.delete(`${accountApiBaseUrl}/api/accounts/delete/account/`, {
       withCredentials: true,
     });
@@ -243,97 +314,6 @@ async function deleteAccount() {
     });
   } finally {
     isDeletionDialogVisible.value = false;
-  }
-}
-
-const formattedJoinDate = computed(() => {
-  return joinDate.value ? formatDate(joinDate.value) : "";
-});
-
-const fetchAccountInfo = async () => {
-  try {
-    const response = await axios.get(
-      `${accountApiBaseUrl}/api/accounts/get/account/`,
-    );
-    const accountInfo = response.data;
-    email.value = accountInfo.email;
-    bio.value = accountInfo.bio;
-    username.value = accountInfo.username;
-    profilePicture.value = accountInfo.profile_picture || "";
-    joinDate.value = accountInfo.created_at?.substring(0, 10) || "";
-  } catch (error: unknown) {
-    if (
-      axios.isAxiosError(error) &&
-      error.response?.data?.code === "token_not_valid"
-    ) {
-      router.push("/login");
-      return;
-    }
-    console.error("Error fetching account info:", error);
-  }
-};
-
-const updateAccount = async () => {
-  try {
-    const response = await axios.put(
-      `${apiBaseUrl}:${accountServicePort}/api/accounts/update/account/`,
-      {
-        username: username.value,
-        email: email.value,
-        bio: bio.value,
-        profile_picture: profilePicture.value,
-      },
-    );
-    const updatedAccount = response.data;
-    email.value = updatedAccount.email;
-    bio.value = updatedAccount.bio;
-    username.value = updatedAccount.username;
-    profilePicture.value = updatedAccount.profile_picture || "";
-    toast.add({
-      severity: "success",
-      summary: "Account Updated",
-      detail: "Your account information has been updated successfully.",
-      life: 3000,
-    });
-  } catch (error: unknown) {
-    let errorMessage = "Update failed.";
-    if (axios.isAxiosError(error) && error.response) {
-      errorMessage = error.response.data?.message || error.message;
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    }
-    toast.add({
-      severity: "error",
-      summary: "Update Failed",
-      detail: errorMessage,
-      life: 3000,
-    });
-  }
-};
-
-const saveEmail = async () => {
-  await updateAccount();
-  isEditingEmail.value = false;
-};
-
-const saveBio = async () => {
-  await updateAccount();
-  isEditingBio.value = false;
-};
-
-function triggerFileInput() {
-  fileInput.value?.click();
-}
-
-function onProfilePictureSelected(event: Event) {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    const file = target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      profilePicture.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
   }
 }
 

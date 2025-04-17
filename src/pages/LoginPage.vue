@@ -19,7 +19,6 @@
           @click="onRegisterClick"
         />
       </div>
-      <!-- Champ email -->
       <PrimeFormField
         v-slot="$field"
         name="email"
@@ -38,7 +37,6 @@
         </PrimeMessage>
       </PrimeFormField>
 
-      <!-- Champ password -->
       <PrimeFormField
         v-slot="$field"
         name="password"

@@ -2,6 +2,7 @@
 
 import "primeicons/primeicons.css";
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 
 import PrimeVue from "primevue/config";
 import Ripple from "primevue/ripple";
@@ -36,6 +37,7 @@ import "./axios-interceptor";
 axios.defaults.withCredentials = true;
 
 const app = createApp(App);
+const pinia = createPinia();
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
@@ -67,5 +69,6 @@ app.component("PrimeDialog", Dialog);
 app.component("PrimeNavbar", PrimeNavbar);
 app.component("FooterComponent", FooterComponent);
 
+app.use(pinia);
 app.use(router);
 app.mount("#app");

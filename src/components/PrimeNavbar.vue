@@ -68,20 +68,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useAuth } from "../composables/useAuth";
+import { useUserStore } from "../stores/userStore";
+
+const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
+const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
+const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
+const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 
 const router = useRouter();
 const { isAuthenticated, setAuthenticated } = useAuth();
-const username = ref("");
+const userStore = useUserStore();
 
 const menuItems = computed(() => {
   return [];
 });
 
-const avatarLetter = computed(() => username.value.charAt(0).toUpperCase());
+const avatarLetter = computed(() => userStore.avatarLetter);
+
+async function fetchCurrentUser() {
+  try {
+    const { data } = await axios.get(
+      `${accountApiBaseUrl}/api/accounts/get/account/`,
+      {
+        withCredentials: true,
+      },
+    );
+    userStore.setUser(data);
+    setAuthenticated(true);
+  } catch {
+    userStore.clearUser();
+    setAuthenticated(false);
+  }
+}
 
 const onLoginButtonClick = () => {
   router.push("/login");
@@ -93,47 +116,16 @@ const onProfileClick = () => {
 
 async function logout() {
   try {
-    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-
-    const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
-    const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
-
     await axios.post(
       `${authApiBaseUrl}/api/auth/logout/`,
       {},
       { withCredentials: true },
     );
-    setAuthenticated(false);
+    userStore.clearUser();
   } catch (error) {
     console.error("Error during logout:", error);
   }
   router.push("/login");
-}
-
-async function fetchCurrentUser() {
-  try {
-    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-    const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
-    const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
-    const response = await axios.get(
-      `${accountApiBaseUrl}/api/accounts/get/account/`,
-      {
-        withCredentials: true,
-      },
-    );
-    if (response.status === 200 && response.data.username) {
-      username.value = response.data.username;
-      setAuthenticated(true);
-    } else {
-      setAuthenticated(false);
-      username.value = "";
-    }
-  } catch (error) {
-    setAuthenticated(false);
-    username.value = "";
-    console.error("Error fetching current user:", error);
-  }
 }
 
 onMounted(fetchCurrentUser);
