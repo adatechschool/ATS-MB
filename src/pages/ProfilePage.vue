@@ -9,10 +9,8 @@
         >
           Account Information
         </div>
-        <!-- Avatar Section with file upload and hover overlay -->
         <div class="flex w-full items-center gap-4">
           <div class="group relative">
-            <!-- Display avatar with image if available, otherwise fallback to label -->
             <template v-if="profilePicture">
               <PrimeAvatar
                 :image="profilePicture"
@@ -31,14 +29,12 @@
                 @click="triggerFileInput"
               />
             </template>
-            <!-- Hover overlay with pencil icon -->
             <div
               class="bg-opacity-50 absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl bg-black opacity-0 transition-opacity group-hover:opacity-70"
               @click="triggerFileInput"
             >
               <i class="pi pi-pencil text-2xl text-white"></i>
             </div>
-            <!-- Hidden file input -->
             <input
               type="file"
               ref="fileInput"
@@ -66,7 +62,6 @@
           Joined on {{ formattedJoinDate }}
         </div>
         <ul class="m-0 list-none p-0">
-          <!-- Email Row -->
           <li
             class="flex flex-wrap items-center border-t border-surface px-2 py-4"
           >
@@ -108,7 +103,6 @@
               </template>
             </div>
           </li>
-          <!-- Bio Row -->
           <li
             class="flex flex-wrap items-center border-t border-b border-surface px-2 py-4"
           >
@@ -155,7 +149,6 @@
         </ul>
       </div>
     </div>
-    <!-- Account Deletion -->
     <div class="mt-8 flex justify-end">
       <PrimeButton
         label="Delete Account"
@@ -222,7 +215,7 @@ async function deleteAccount() {
     const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
     const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 
-    await axios.delete(`${accountApiBaseUrl}/api/accounts/delete/me/`, {
+    await axios.delete(`${accountApiBaseUrl}/api/accounts/delete/account/`, {
       withCredentials: true,
     });
 
@@ -233,7 +226,6 @@ async function deleteAccount() {
       life: 3000,
     });
 
-    // Redirect the user to the registration or home page after deletion
     router.push("/register");
   } catch (error: unknown) {
     let errorMessage = "Account deletion failed.";
@@ -259,7 +251,9 @@ const formattedJoinDate = computed(() => {
 
 const fetchAccountInfo = async () => {
   try {
-    const response = await axios.get(`${accountApiBaseUrl}/api/accounts/me/`);
+    const response = await axios.get(
+      `${accountApiBaseUrl}/api/accounts/get/account/`,
+    );
     const accountInfo = response.data;
     email.value = accountInfo.email;
     bio.value = accountInfo.bio;
@@ -281,7 +275,7 @@ const fetchAccountInfo = async () => {
 const updateAccount = async () => {
   try {
     const response = await axios.put(
-      `${apiBaseUrl}:${accountServicePort}/api/accounts/update/me/`,
+      `${apiBaseUrl}:${accountServicePort}/api/accounts/update/account/`,
       {
         username: username.value,
         email: email.value,

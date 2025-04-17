@@ -3,12 +3,10 @@
 <template>
   <nav class="card px-4 pt-8">
     <PrimeMenubar :model="menuItems">
-      <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
         <p class="text-4xl font-bold">DevBlog</p>
       </template>
 
-      <!-- Slot personnalisé pour chacun des items -->
       <template #item="{ item, props, hasSubmenu, root }">
         <a v-ripple class="flex items-center" v-bind="props.action">
           <span v-if="item.icon" :class="[item.icon, 'mr-2']" />
@@ -34,7 +32,6 @@
         </a>
       </template>
 
-      <!-- Slot de droite : zone de recherche et avatar -->
       <template #end>
         <div class="flex items-center gap-2">
           <!-- <PrimeInputText
