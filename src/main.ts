@@ -22,6 +22,7 @@ import Avatar from "primevue/avatar";
 import Chip from "primevue/chip";
 import Checkbox from "primevue/checkbox";
 import ProgressSpinner from "primevue/progressspinner";
+import Dialog from "primevue/dialog";
 
 import App from "./App.vue";
 import router from "./router";
@@ -61,6 +62,7 @@ app.component("PrimeAvatar", Avatar);
 app.component("PrimeChip", Chip);
 app.component("PrimeCheckbox", Checkbox);
 app.component("PrimeProgressSpinner", ProgressSpinner);
+app.component("PrimeDialog", Dialog);
 
 app.component("PrimeNavbar", PrimeNavbar);
 app.component("FooterComponent", FooterComponent);

@@ -155,6 +155,35 @@
         </ul>
       </div>
     </div>
+    <!-- Account Deletion -->
+    <div class="mt-8 flex justify-end">
+      <PrimeButton
+        label="Delete Account"
+        severity="danger"
+        icon="pi pi-trash"
+        @click="confirmDeletion"
+      />
+    </div>
+
+    <PrimeDialog
+      v-model:visible="isDeletionDialogVisible"
+      header="Confirm Account Deletion"
+      :modal="true"
+      class="w-1/3"
+    >
+      <p class="mb-4">
+        Are you sure you want to permanently delete your account? This action
+        cannot be undone.
+      </p>
+      <div class="flex justify-end gap-2">
+        <PrimeButton
+          label="Cancel"
+          text
+          @click="isDeletionDialogVisible = false"
+        />
+        <PrimeButton label="Confirm" severity="danger" @click="deleteAccount" />
+      </div>
+    </PrimeDialog>
   </main>
 </template>
 
@@ -180,6 +209,49 @@ const toast = useToast();
 const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
 const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
 const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
+
+const isDeletionDialogVisible = ref(false);
+
+function confirmDeletion() {
+  isDeletionDialogVisible.value = true;
+}
+
+async function deleteAccount() {
+  try {
+    const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+    const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
+    const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
+
+    await axios.delete(`${accountApiBaseUrl}/api/accounts/delete/me/`, {
+      withCredentials: true,
+    });
+
+    toast.add({
+      severity: "success",
+      summary: "Account Deleted",
+      detail: "Your account has been successfully deleted.",
+      life: 3000,
+    });
+
+    // Redirect the user to the registration or home page after deletion
+    router.push("/register");
+  } catch (error: unknown) {
+    let errorMessage = "Account deletion failed.";
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.error || error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    toast.add({
+      severity: "error",
+      summary: "Deletion Failed",
+      detail: errorMessage,
+      life: 3000,
+    });
+  } finally {
+    isDeletionDialogVisible.value = false;
+  }
+}
 
 const formattedJoinDate = computed(() => {
   return joinDate.value ? formatDate(joinDate.value) : "";
