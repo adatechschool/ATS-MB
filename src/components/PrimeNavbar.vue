@@ -5,7 +5,7 @@
     <PrimeMenubar :model="menuItems">
       <!-- Slot de gauche: affichage de votre logo SVG -->
       <template #start>
-        <p class="mr-32 text-4xl font-bold">DevBlog</p>
+        <p class="text-4xl font-bold">DevBlog</p>
       </template>
 
       <!-- Slot personnalisé pour chacun des items -->
