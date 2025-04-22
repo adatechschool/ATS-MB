@@ -156,10 +156,10 @@ const onFormSubmit = async ({
 }) => {
   if (valid) {
     try {
-      const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
-      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
-      const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/register/`;
-      const response = await axios.post(apiUrl, {
+      // const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
+      // const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
+      // const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/register/`;
+      const response = await axios.post("/api/auth/register/", {
         username: values.username,
         email: values.email,
         password: values.password,

@@ -6,9 +6,16 @@ export const useUserStore = defineStore("user", () => {
   const username = ref("");
   const email = ref("");
   const bio = ref("");
-  const profilePicture = ref("");
+  const rawProfilePicture = ref<string | null>(null);
+  const profilePicture = computed(() => {
+    const str = rawProfilePicture.value;
+    if (!str) return "";
+    if (str.startsWith("http") || str.startsWith("data:")) {
+      return str;
+    }
+    return `data:image/png;base64,${str}`;
+  });
   const joinDate = ref("");
-
   const avatarLetter = computed(() => username.value.charAt(0).toUpperCase());
 
   function setUser(user: {
@@ -21,16 +28,20 @@ export const useUserStore = defineStore("user", () => {
     username.value = user.username;
     email.value = user.email;
     bio.value = user.bio;
-    profilePicture.value = user.profilePicture || "";
-    joinDate.value = user.joinDate || "";
+    rawProfilePicture.value = user.profilePicture ?? null;
+    joinDate.value = user.joinDate ?? "";
   }
 
   function clearUser() {
     username.value = "";
     email.value = "";
     bio.value = "";
-    profilePicture.value = "";
+    rawProfilePicture.value = null;
     joinDate.value = "";
+  }
+
+  function setRawProfilePicture(b64: string | null) {
+    rawProfilePicture.value = b64;
   }
 
   return {
@@ -38,6 +49,8 @@ export const useUserStore = defineStore("user", () => {
     email,
     bio,
     profilePicture,
+    rawProfilePicture,
+    setRawProfilePicture,
     joinDate,
     avatarLetter,
     setUser,

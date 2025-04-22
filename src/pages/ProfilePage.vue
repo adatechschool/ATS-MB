@@ -178,10 +178,6 @@ import formatDate from "../helpers/dateFormatting";
 import router from "../router";
 import { useUserStore } from "../stores/userStore";
 
-const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
-const accountServicePort = `${import.meta.env.VITE_ACCOUNT_SERVICE_PORT}`;
-const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
 const toast = useToast();
 const userStore = useUserStore();
 
@@ -193,9 +189,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 
 const fetchAccountInfo = async () => {
   try {
-    const { data } = await axios.get(
-      `${accountApiBaseUrl}/api/accounts/get/account/`,
-    );
+    const { data } = await axios.get(`/api/accounts/get/account/`);
     userStore.setUser({
       username: data.username,
       email: data.email,
@@ -217,15 +211,12 @@ const fetchAccountInfo = async () => {
 
 const updateAccount = async () => {
   try {
-    const response = await axios.put(
-      `${accountApiBaseUrl}/api/accounts/update/account/`,
-      {
-        username: userStore.username,
-        email: userStore.email,
-        bio: userStore.bio,
-        profile_picture: userStore.profilePicture,
-      },
-    );
+    const response = await axios.put(`/api/accounts/update/account/`, {
+      username: userStore.username,
+      email: userStore.email,
+      bio: userStore.bio,
+      profile_picture: userStore.rawProfilePicture ?? null,
+    });
     userStore.setUser(response.data);
     toast.add({
       severity: "success",
@@ -265,7 +256,9 @@ function onProfilePictureSelected(event: Event) {
     const file = target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
-      userStore.profilePicture = e.target?.result as string;
+      const full = e.target?.result as string;
+      const [, raw] = full.split(",", 2);
+      userStore.setRawProfilePicture(raw);
     };
     reader.readAsDataURL(file);
   }
@@ -277,7 +270,7 @@ function confirmDeletion() {
 
 async function deleteAccount() {
   try {
-    await axios.delete(`${accountApiBaseUrl}/api/accounts/delete/account/`, {
+    await axios.delete(`/api/accounts/delete/account/`, {
       withCredentials: true,
     });
 

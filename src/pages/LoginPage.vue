@@ -26,7 +26,7 @@
         :resolver="zodEmailResolver"
         class="flex flex-col gap-1"
       >
-        <PrimeInputText type="text" placeholder="Email" />
+        <PrimeInputText v-bind="$field" type="text" placeholder="Email" />
         <PrimeMessage
           v-if="$field?.invalid"
           severity="error"
@@ -45,6 +45,7 @@
         class="flex flex-col gap-1"
       >
         <PrimePassword
+          v-bind="$field"
           type="text"
           placeholder="Password"
           :feedback="false"
@@ -109,18 +110,11 @@ const onFormSubmit = async ({
 }) => {
   if (valid) {
     try {
-      const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
-
-      const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
-      const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
-
-      const authResponse = await axios.post(
-        `${authApiBaseUrl}/api/auth/login/`,
-        {
-          email: values.email,
-          password: values.password,
-        },
-      );
+      const payload = {
+        username: values.email,
+        password: values.password,
+      };
+      const authResponse = await axios.post(`/api/auth/login/`, payload);
 
       if (authResponse.status === 200) {
         setAuthenticated(true);

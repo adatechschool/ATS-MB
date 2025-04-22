@@ -34,6 +34,7 @@ import FooterComponent from "./components/FooterComponent.vue";
 import axios from "axios";
 import "./axios-interceptor";
 
+axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
 
 const app = createApp(App);

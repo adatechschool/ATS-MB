@@ -44,9 +44,7 @@ const loading = ref(true);
 // Fonction de récupération des posts via l'API
 const fetchPosts = async () => {
   try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_DJANGO_API_URL}/api/posts/list/`,
-    );
+    const response = await axios.get(`/api/posts/list/`);
     posts.value = response.data;
   } catch (error: unknown) {
     console.error("Erreur lors de la récupération des posts", error);

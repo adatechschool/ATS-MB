@@ -6,25 +6,22 @@ import axios from "axios";
 const isAuthenticated = ref(false);
 const bootstrapped = ref(false);
 
-const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
-const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
 export function useAuth() {
   const userStore = useUserStore();
 
   async function fetchAuth() {
     try {
-      const { data } = await axios.get(
-        `${accountApiBaseUrl}/api/accounts/get/account/`,
-        { withCredentials: true },
-      );
+      const response = await axios.get(`/api/accounts/get/account/`, {
+        withCredentials: true,
+      });
+      const payload = response.data;
+      const userData = payload.data;
       userStore.setUser({
-        username: data.username,
-        email: data.email,
-        bio: data.bio,
-        profilePicture: data.profile_picture,
-        joinDate: data.created_at?.substring(0, 10),
+        username: userData.username,
+        email: userData.email,
+        bio: userData.bio,
+        profilePicture: userData.profile_picture,
+        joinDate: userData.date_joined?.substring(0, 10),
       });
       isAuthenticated.value = true;
     } catch {

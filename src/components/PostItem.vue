@@ -95,7 +95,7 @@ const toggleLike = async () => {
     if (!liked.value) {
       // Appel API pour "liker"
       await axios.post(
-        `${import.meta.env.VITE_DJANGO_API_URL}/api/likes/posts/${props.post.id}/like/`,
+        `/api/likes/posts/${props.post.id}/like/`,
         {},
         { headers: { Authorization: `Token ${token}` } },
       );
@@ -109,7 +109,7 @@ const toggleLike = async () => {
     } else {
       // Appel API pour "unliker"
       await axios.post(
-        `${import.meta.env.VITE_DJANGO_API_URL}/api/likes/posts/${props.post.id}/unlike/`,
+        `/api/likes/posts/${props.post.id}/unlike/`,
         {},
         { headers: { Authorization: `Token ${token}` } },
       );

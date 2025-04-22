@@ -76,11 +76,11 @@ import axios from "axios";
 import { useAuth } from "../composables/useAuth";
 import { useUserStore } from "../stores/userStore";
 
-const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
-const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
-const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
-const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
+// const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
+// const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
+// const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
+// const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
+// const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
 
 const router = useRouter();
 const { isAuthenticated, setAuthenticated, fetchAuth } = useAuth();
@@ -92,12 +92,9 @@ const menuItems = computed(() => {
 
 async function fetchCurrentUser() {
   try {
-    const { data } = await axios.get(
-      `${accountApiBaseUrl}/api/accounts/get/account/`,
-      {
-        withCredentials: true,
-      },
-    );
+    const { data } = await axios.get(`/api/accounts/get/account/`, {
+      withCredentials: true,
+    });
     userStore.setUser(data);
     setAuthenticated(true);
   } catch {
@@ -116,11 +113,7 @@ const onProfileClick = () => {
 
 async function logout() {
   try {
-    await axios.post(
-      `${authApiBaseUrl}/api/auth/logout/`,
-      {},
-      { withCredentials: true },
-    );
+    await axios.post(`/api/auth/logout/`, {}, { withCredentials: true });
     userStore.clearUser();
   } catch (error) {
     console.error("Error during logout:", error);
