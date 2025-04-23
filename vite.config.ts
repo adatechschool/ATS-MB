@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
   const ACC = env.VITE_ACCOUNT_SERVICE_PORT;
   const SESS = env.VITE_SESSION_SERVICE_PORT;
   const USERS = env.VITE_USER_SERVICE_PORT;
+  const POSTS = env.VITE_POSTS_SERVICE_PORT;
 
   return {
     plugins: [vue(), tailwindcss()],
@@ -36,6 +37,11 @@ export default defineConfig(({ mode }) => {
         },
         "/api/users": {
           target: `${DJANGO}:${USERS}`,
+          changeOrigin: true,
+          secure: false,
+        },
+        "/api/posts": {
+          target: `${DJANGO}:${POSTS}`,
           changeOrigin: true,
           secure: false,
         },
