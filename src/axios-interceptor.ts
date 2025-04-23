@@ -5,31 +5,35 @@ import router from "./router";
 const REFRESH_URL = "/api/sessions/refresh/";
 
 axios.interceptors.response.use(
-  (response) => response,
+  (r) => r,
   async (error) => {
+    const resp = error.response;
     const originalRequest = error.config;
-    if (error.response?.status === 401 && originalRequest.url === REFRESH_URL) {
+
+    // 1) If this is the refresh endpoint itself, go to login
+    if (resp?.status === 401 && originalRequest.url === REFRESH_URL) {
       router.push("/login");
-      return Promise.reject(
-        error instanceof Error ? error : new Error(String(error)),
-      );
+      return Promise.reject(new Error(error.message));
     }
-    if (error.response?.status === 401 && !originalRequest._retry) {
+
+    // 2) ONLY refresh when the access‐token is EXPIRED or INVALID,
+    //    _not_ on every 401 (e.g. user_not_found)
+    const isAccessTokenExpired =
+      resp?.status === 401 &&
+      resp.data?.code === "token_not_valid" &&
+      resp.data?.detail?.[0]?.token_class === "AccessToken";
+
+    if (isAccessTokenExpired && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         await axios.post(REFRESH_URL, {}, { withCredentials: true });
         return axios(originalRequest);
-      } catch (refreshError) {
+      } catch {
         router.push("/login");
-        return Promise.reject(
-          refreshError instanceof Error
-            ? refreshError
-            : new Error(String(refreshError)),
-        );
+        return Promise.reject(new Error(error.message));
       }
     }
-    return Promise.reject(
-      error instanceof Error ? error : new Error(String(error)),
-    );
+
+    return Promise.reject(new Error(error.message));
   },
 );

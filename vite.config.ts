@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
   const AUTH = env.VITE_AUTH_SERVICE_PORT;
   const ACC = env.VITE_ACCOUNT_SERVICE_PORT;
   const SESS = env.VITE_SESSION_SERVICE_PORT;
+  const USERS = env.VITE_USER_SERVICE_PORT;
 
   return {
     plugins: [vue(), tailwindcss()],
@@ -30,6 +31,11 @@ export default defineConfig(({ mode }) => {
         },
         "/api/sessions": {
           target: `${DJANGO}:${SESS}`,
+          changeOrigin: true,
+          secure: false,
+        },
+        "/api/users": {
+          target: `${DJANGO}:${USERS}`,
           changeOrigin: true,
           secure: false,
         },
