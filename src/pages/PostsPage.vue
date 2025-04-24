@@ -1,38 +1,27 @@
 <template>
-  <div class="flex flex-col items-center p-4">
-    <!-- Button to create a new post -->
-    <router-link to="/create">
-      <button
-        class="mb-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
-        Créer un nouveau post
-      </button>
-    </router-link>
-
-    <!-- Loading indicator -->
-    <div v-if="loading" class="flex h-64 items-center justify-center">
+  <main class="flex flex-1 flex-col items-center justify-center p-4">
+    <h1 class="mb-4 text-2xl font-bold">Timeline</h1>
+    <div
+      v-if="loading"
+      class="flex flex-1 items-center justify-center text-center"
+    >
       <PrimeProgressSpinner />
     </div>
-    <!-- Error message -->
-    <div v-if="error" class="w-full max-w-xl">
-      <PrimeMessage severity="error" :text="error" />
-    </div>
-    <!-- Posts list -->
-    <div v-if="!loading && !error" class="w-full max-w-2xl space-y-4">
-      <PostItem v-for="post in posts" :key="post.post_id" :post="post" />
-      <div v-if="posts.length === 0" class="text-center text-gray-500">
-        Aucun post disponible.
+    <section v-else class="flex flex-1 items-center justify-center">
+      <div v-if="posts.length === 0" class="text-center text-3xl">
+        No posts available.
       </div>
-    </div>
-  </div>
+      <div v-else>
+        <PostItem v-for="post in posts" :key="post.post_id" :post="post" />
+      </div>
+    </section>
+  </main>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import PostItem from "../components/PostItem.vue";
-import PrimeMessage from "primevue/message";
-import PrimeProgressSpinner from "primevue/progressspinner";
 
 type Post = {
   post_id: number;
