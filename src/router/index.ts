@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import UsersPage from "../pages/UsersPage.vue";
+import PostsPage from "../pages/PostsPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import { useAuth } from "../composables/useAuth";
 
@@ -18,6 +19,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   { path: "/users", name: "UsersPage", component: UsersPage },
+  { path: "/posts", name: "PostsPage", component: PostsPage },
 ];
 
 const router = createRouter({
