@@ -72,7 +72,7 @@ import { useRouter } from "vue-router";
 import { reactive } from "vue";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
-import axios from "axios";
+import api from "../axios-instance";
 import { useToast } from "primevue/usetoast";
 import { useAuth } from "../composables/useAuth";
 
@@ -111,10 +111,10 @@ const onFormSubmit = async ({
   if (valid) {
     try {
       const payload = {
-        username: values.email,
+        email: values.email,
         password: values.password,
       };
-      const authResponse = await axios.post(`/api/auth/login/`, payload);
+      const authResponse = await api.post(`/api/auth/login/`, payload);
 
       if (authResponse.status === 200) {
         setAuthenticated(true);
@@ -130,7 +130,7 @@ const onFormSubmit = async ({
       }
     } catch (error: unknown) {
       let errorMessage = "Login failed.";
-      if (axios.isAxiosError(error) && error.response) {
+      if (api.isAxiosError(error) && error.response) {
         errorMessage = error.response.data?.message || error.message;
       } else if (error instanceof Error) {
         errorMessage = error.message;
