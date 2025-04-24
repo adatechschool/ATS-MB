@@ -10,10 +10,10 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => {
     const env = response.data;
-    if (env.status === "success") {
+    if (env?.status === "success") {
       return { ...response, data: env.data };
     } else {
-      return Promise.reject(new Error(env.error.message));
+      return Promise.reject(new Error(env.error?.message || "Backend error."));
     }
   },
   (error) => {

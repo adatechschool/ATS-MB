@@ -72,10 +72,12 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import api from "../axios-instance";
 import { useAuth } from "../composables/useAuth";
 import { useUserStore } from "../stores/userStore";
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const router = useRouter();
 const { isAuthenticated, setAuthenticated, fetchAuth } = useAuth();
 const userStore = useUserStore();
@@ -92,7 +94,7 @@ const menuItems = computed(() => {
 
 async function fetchCurrentUser() {
   try {
-    const { data } = await axios.get(`/api/accounts/get/account/`, {
+    const { data } = await api.get(`/api/accounts/get/account/`, {
       withCredentials: true,
     });
     userStore.setUser(data);
@@ -113,14 +115,31 @@ const onProfileClick = () => {
 
 async function logout() {
   try {
-    await axios.post(`/api/auth/logout/`, {}, { withCredentials: true });
+    await api.post(`/api/auth/logout/`);
     userStore.clearUser();
-  } catch (error) {
-    console.error("Error during logout:", error);
+    setAuthenticated(false);
+    await fetchAuth();
+    router.push("/login");
+    toast.add({
+      severity: "success",
+      summary: "Logout successful.",
+      detail: "You have been successfully logged out.",
+      life: 3000,
+    });
+  } catch (error: unknown) {
+    userStore.clearUser();
+    setAuthenticated(false);
+    await fetchAuth();
+    router.push("/login");
+    toast.add({
+      severity: "error",
+      summary: "Logout failed.",
+      detail: api.isAxiosError(error)
+        ? error.response?.data?.error || error.message
+        : "Logout failed.",
+      life: 3000,
+    });
   }
-  setAuthenticated(false);
-  await fetchAuth();
-  router.push("/login");
 }
 
 onMounted(fetchCurrentUser);
