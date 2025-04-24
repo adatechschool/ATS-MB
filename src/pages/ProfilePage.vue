@@ -177,9 +177,11 @@ import { useToast } from "primevue/usetoast";
 import formatDate from "../helpers/dateFormatting";
 import router from "../router";
 import { useUserStore } from "../stores/userStore";
+import { useAuth } from "../composables/useAuth";
 
 const toast = useToast();
 const userStore = useUserStore();
+const { setAuthenticated } = useAuth();
 
 const isEditingEmail = ref(false);
 const isEditingBio = ref(false);
@@ -206,7 +208,7 @@ async function loadAccount() {
       severity: "error",
       summary: "Account loading failed.",
       detail: api.isAxiosError(err)
-        ? err.response?.data?.error || err.message
+        ? (err as Error).response?.data?.error || (err as Error).message
         : "Account loading failed.",
       life: 3000,
     });
@@ -223,29 +225,6 @@ function startEditBio() {
   editableBio.value = userStore.bio;
   isEditingBio.value = true;
 }
-
-const updateAccount = async () => {
-  try {
-    await api.put("/api/accounts/update/account/", {
-      username: userStore.username,
-      email: userStore.email,
-      bio: userStore.bio,
-      profile_picture: userStore.rawProfilePicture ?? null,
-    });
-    toast.add({
-      severity: "success",
-      summary: "Account Updated",
-      detail: "Saved!",
-    });
-    await loadAccount();
-  } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Update Failed",
-      detail: (error as Error).message,
-    });
-  }
-};
 
 const saveEmail = async () => {
   try {
@@ -267,7 +246,7 @@ const saveEmail = async () => {
     toast.add({
       severity: "error",
       summary: "Update Failed",
-      detail: err.message,
+      detail: (err as Error).message,
       life: 3000,
     });
   }
@@ -289,11 +268,11 @@ const saveBio = async () => {
     });
     isEditingBio.value = false;
     await loadAccount();
-  } catch (err: any) {
+  } catch (err: unknown) {
     toast.add({
       severity: "error",
       summary: "Update Failed",
-      detail: err.message,
+      detail: (err as Error).message,
       life: 3000,
     });
   }
@@ -343,13 +322,16 @@ function confirmDeletion() {
 async function deleteAccount() {
   try {
     await api.delete("/api/accounts/delete/account/");
+    userStore.clearUser();
+    setAuthenticated(false);
     toast.add({ severity: "success", summary: "Deleted", detail: "Bye!" });
-    router.push("/register");
+    router.push("/login");
   } catch (error: unknown) {
     toast.add({
       severity: "error",
       summary: "Deletion Failed",
-      detail: error.message,
+      detail: (error as Error).message,
+      life: 3000,
     });
   } finally {
     isDeletionDialogVisible.value = false;
