@@ -69,7 +69,6 @@ const formattedDate = computed(() => {
   });
 });
 
-// Fonction pour liker/déliker
 const toggleLike = async () => {
   try {
     const endpoint = liked.value ? "unlike" : "like";
