@@ -1,7 +1,7 @@
 // src/composables/useAuth.ts
 import { ref } from "vue";
 import { useUserStore } from "../stores/userStore";
-import axios from "axios";
+import api from "../axios-instance";
 
 const isAuthenticated = ref(false);
 const bootstrapped = ref(false);
@@ -11,7 +11,7 @@ export function useAuth() {
 
   async function fetchAuth() {
     try {
-      const response = await axios.get(`/api/accounts/get/account/`, {
+      const response = await api.get(`/api/accounts/get/account/`, {
         withCredentials: true,
       });
       const payload = response.data;

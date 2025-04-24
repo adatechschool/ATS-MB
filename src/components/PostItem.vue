@@ -37,7 +37,7 @@ import { ref, computed } from "vue";
 import Avatar from "primevue/avatar";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
-import axios from "axios";
+import api from "../axios-instance";
 
 interface Post {
   post_id: number;
@@ -72,7 +72,7 @@ const formattedDate = computed(() => {
 const toggleLike = async () => {
   try {
     const endpoint = liked.value ? "unlike" : "like";
-    await axios.post(
+    await api.post(
       `/api/likes/posts/${props.post.post_id}/${endpoint}/`,
       {},
       { headers: { Authorization: `Token ${token}` } },

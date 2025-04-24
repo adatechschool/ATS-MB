@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../axios-instance";
 import PostItem from "../components/PostItem.vue";
 
 type Post = {
@@ -38,7 +38,7 @@ const fetchPosts = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const response = await axios.get("/api/posts/list/");
+    const response = await api.get("/api/posts/list/");
     const data = response.data;
     if (data.status === "success" && Array.isArray(data.data)) {
       posts.value = data.data;

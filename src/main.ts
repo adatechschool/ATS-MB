@@ -33,11 +33,11 @@ import router from "./router";
 import PrimeNavbar from "./components/PrimeNavbar.vue";
 import FooterComponent from "./components/FooterComponent.vue";
 
-import axios from "axios";
+import api from "./axios-instance";
 import "./axios-interceptor";
 
-axios.defaults.baseURL = "/";
-axios.defaults.withCredentials = true;
+api.defaults.baseURL = "/";
+api.defaults.withCredentials = true;
 
 async function bootstrap() {
   const app = createApp(App);
