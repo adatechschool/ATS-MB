@@ -7,4 +7,18 @@ const api = axios.create({
   withCredentials: true,
 });
 
+api.interceptors.response.use(
+  (response) => {
+    const env = response.data;
+    if (env.status === "success") {
+      return { ...response, data: env.data };
+    } else {
+      return Promise.reject(new Error(env.error.message));
+    }
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 export default api;
