@@ -6,7 +6,6 @@ import LoginPage from "../pages/LoginPage.vue";
 import PostsPage from "../pages/PostsPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import { useAuth } from "../composables/useAuth";
-import CreatePost from "../pages/CreatePost.vue";
 
 const routes = [
   { path: "/", redirect: "/register" },
@@ -18,8 +17,12 @@ const routes = [
     component: ProfilePage,
     meta: { requiresAuth: true },
   },
-  { path: "/posts", name: "PostsPage", component: PostsPage },
-  { path: "/create-post", name: "CreatePost", component: CreatePost },
+  {
+    path: "/posts",
+    name: "PostsPage",
+    component: PostsPage,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({

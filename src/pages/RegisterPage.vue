@@ -171,7 +171,7 @@ const onFormSubmit = async ({
     } catch (error: unknown) {
       let errorMessage = "Registration failed.";
       if (api.isAxiosError(error) && error.response) {
-        errorMessage = error.response.data?.message || error.message;
+        errorMessage = error.response.data?.message || (error as Error).message;
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
