@@ -35,13 +35,11 @@ import FooterComponent from "./components/FooterComponent.vue";
 
 import axios from "axios";
 import "./axios-interceptor";
-import { initCsrf } from "./axios-instance";
 
 axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
 
 async function bootstrap() {
-  await initCsrf();
   const app = createApp(App);
   const pinia = createPinia();
   app.use(PrimeVue, {

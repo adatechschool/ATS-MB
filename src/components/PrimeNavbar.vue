@@ -76,18 +76,18 @@ import axios from "axios";
 import { useAuth } from "../composables/useAuth";
 import { useUserStore } from "../stores/userStore";
 
-// const apiBaseUrl = import.meta.env.VITE_DJANGO_API_BASE_URL;
-// const authServicePort = import.meta.env.VITE_AUTH_SERVICE_PORT;
-// const authApiBaseUrl = `${apiBaseUrl}:${authServicePort}`;
-// const accountServicePort = import.meta.env.VITE_ACCOUNT_SERVICE_PORT;
-// const accountApiBaseUrl = `${apiBaseUrl}:${accountServicePort}`;
-
 const router = useRouter();
 const { isAuthenticated, setAuthenticated, fetchAuth } = useAuth();
 const userStore = useUserStore();
 
 const menuItems = computed(() => {
-  return [];
+  return [
+    {
+      icon: "pi pi-home",
+      label: "Home",
+      command: () => router.push("/posts"),
+    },
+  ];
 });
 
 async function fetchCurrentUser() {

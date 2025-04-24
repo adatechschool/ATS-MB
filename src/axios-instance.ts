@@ -4,7 +4,7 @@ import axios from "axios";
 
 // 1) base config for all our services
 const api = axios.create({
-  baseURL: import.meta.env.VITE_DJANGO_API_BASE_URL,
+  baseURL: "/",
   withCredentials: true, // always send & receive cookies
 });
 

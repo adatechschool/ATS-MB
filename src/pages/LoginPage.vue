@@ -111,7 +111,7 @@ const onFormSubmit = async ({
   if (valid) {
     try {
       const payload = {
-        username: values.email,
+        email: values.email,
         password: values.password,
       };
       const authResponse = await api.post(`/api/auth/login/`, payload);
