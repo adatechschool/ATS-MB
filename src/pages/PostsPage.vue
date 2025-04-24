@@ -1,7 +1,14 @@
-<!-- src\pages\PostsPage.vue -->
-
 <template>
   <div class="flex flex-col items-center p-4">
+    <!-- Button to create a new post -->
+    <router-link to="/create">
+      <button
+        class="mb-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+      >
+        Créer un nouveau post
+      </button>
+    </router-link>
+
     <!-- Loading indicator -->
     <div v-if="loading" class="flex h-64 items-center justify-center">
       <PrimeProgressSpinner />
