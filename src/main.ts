@@ -26,6 +26,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import Dialog from "primevue/dialog";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import VirtualScroller from "primevue/virtualscroller";
 
 import App from "./App.vue";
 import router from "./router";
@@ -71,6 +72,7 @@ async function bootstrap() {
   app.component("PrimeDialog", Dialog);
   app.component("PrimeDataTable", DataTable);
   app.component("PrimeColumn", Column);
+  app.component("PrimeVirtualScroller", VirtualScroller);
 
   app.component("PrimeNavbar", PrimeNavbar);
   app.component("FooterComponent", FooterComponent);
