@@ -101,7 +101,7 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import { z } from "zod";
-import axios from "axios";
+import api from "../axios-instance";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
@@ -156,10 +156,7 @@ const onFormSubmit = async ({
 }) => {
   if (valid) {
     try {
-      // const apiBaseUrl = `${import.meta.env.VITE_DJANGO_API_BASE_URL}`;
-      // const authServicePort = `${import.meta.env.VITE_AUTH_SERVICE_PORT}`;
-      // const apiUrl = `${apiBaseUrl}:${authServicePort}/api/auth/register/`;
-      const response = await axios.post("/api/auth/register/", {
+      const response = await api.post("/api/auth/register/", {
         username: values.username,
         email: values.email,
         password: values.password,
@@ -173,7 +170,7 @@ const onFormSubmit = async ({
       router.push("/login");
     } catch (error: unknown) {
       let errorMessage = "Registration failed.";
-      if (axios.isAxiosError(error) && error.response) {
+      if (api.isAxiosError(error) && error.response) {
         errorMessage = error.response.data?.message || error.message;
       } else if (error instanceof Error) {
         errorMessage = error.message;

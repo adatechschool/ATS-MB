@@ -1,10 +1,10 @@
 // src\axios-interceptor.ts
-import axios from "axios";
+import api from "./axios-instance";
 import router from "./router";
 
 const REFRESH_URL = "/api/sessions/refresh/";
 
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (r) => r,
   async (error) => {
     const resp = error.response;
@@ -26,8 +26,8 @@ axios.interceptors.response.use(
     if (isAccessTokenExpired && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await axios.post(REFRESH_URL, {}, { withCredentials: true });
-        return axios(originalRequest);
+        await api.post(REFRESH_URL, {}, { withCredentials: true });
+        return api(originalRequest);
       } catch {
         router.push("/login");
         return Promise.reject(new Error(error.message));

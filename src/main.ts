@@ -35,45 +35,51 @@ import FooterComponent from "./components/FooterComponent.vue";
 
 import axios from "axios";
 import "./axios-interceptor";
+import { initCsrf } from "./axios-instance";
 
 axios.defaults.baseURL = "/";
 axios.defaults.withCredentials = true;
 
-const app = createApp(App);
-const pinia = createPinia();
-app.use(PrimeVue, {
-  theme: {
-    preset: Aura,
-    options: {
-      darkModeSelector: "system",
+async function bootstrap() {
+  await initCsrf();
+  const app = createApp(App);
+  const pinia = createPinia();
+  app.use(PrimeVue, {
+    theme: {
+      preset: Aura,
+      options: {
+        darkModeSelector: "system",
+      },
     },
-  },
-});
-app.directive("ripple", Ripple);
+  });
+  app.directive("ripple", Ripple);
 
-app.use(ToastService);
+  app.use(ToastService);
 
-app.component("PrimeToast", Toast);
-app.component("PrimeButton", Button);
-app.component("PrimeForm", Form);
-app.component("PrimeFormField", FormField);
-app.component("PrimeInputText", InputText);
-app.component("PrimeMessage", Message);
-app.component("PrimePassword", Password);
-app.component("PrimeTextarea", Textarea);
-app.component("PrimeMenubar", Menubar);
-app.component("PrimeBadge", Badge);
-app.component("PrimeAvatar", Avatar);
-app.component("PrimeChip", Chip);
-app.component("PrimeCheckbox", Checkbox);
-app.component("PrimeProgressSpinner", ProgressSpinner);
-app.component("PrimeDialog", Dialog);
-app.component("PrimeDataTable", DataTable);
-app.component("PrimeColumn", Column);
+  app.component("PrimeToast", Toast);
+  app.component("PrimeButton", Button);
+  app.component("PrimeForm", Form);
+  app.component("PrimeFormField", FormField);
+  app.component("PrimeInputText", InputText);
+  app.component("PrimeMessage", Message);
+  app.component("PrimePassword", Password);
+  app.component("PrimeTextarea", Textarea);
+  app.component("PrimeMenubar", Menubar);
+  app.component("PrimeBadge", Badge);
+  app.component("PrimeAvatar", Avatar);
+  app.component("PrimeChip", Chip);
+  app.component("PrimeCheckbox", Checkbox);
+  app.component("PrimeProgressSpinner", ProgressSpinner);
+  app.component("PrimeDialog", Dialog);
+  app.component("PrimeDataTable", DataTable);
+  app.component("PrimeColumn", Column);
 
-app.component("PrimeNavbar", PrimeNavbar);
-app.component("FooterComponent", FooterComponent);
+  app.component("PrimeNavbar", PrimeNavbar);
+  app.component("FooterComponent", FooterComponent);
 
-app.use(pinia);
-app.use(router);
-app.mount("#app");
+  app.use(pinia);
+  app.use(router);
+  app.mount("#app");
+}
+
+bootstrap();
