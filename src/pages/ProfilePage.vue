@@ -30,10 +30,10 @@
               />
             </template>
             <div
-              class="bg-opacity-50 absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl bg-black opacity-0 transition-opacity group-hover:opacity-70"
+              class="bg-opacity-50 absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl opacity-0 transition-opacity group-hover:opacity-70"
               @click="triggerFileInput"
             >
-              <i class="pi pi-pencil text-2xl text-white"></i>
+              <i class="pi pi-pencil text-2xl"></i>
             </div>
             <input
               type="file"
@@ -65,7 +65,7 @@
             >
               <template v-if="isEditingEmail">
                 <PrimeInputText
-                  v-model="userStore.email"
+                  v-model="editableEmail"
                   placeholder="Email"
                   type="text"
                 />
@@ -88,7 +88,7 @@
                   label="Edit"
                   icon="pi pi-pencil"
                   text
-                  @click="isEditingEmail = true"
+                  @click="startEditEmail"
                 />
               </template>
             </div>
@@ -106,7 +106,7 @@
             >
               <template v-if="isEditingBio">
                 <PrimeTextarea
-                  v-model="userStore.bio"
+                  v-model="editableBio"
                   autoResize
                   placeholder="Bio"
                   rows="3"
@@ -131,7 +131,7 @@
                   label="Edit"
                   icon="pi pi-pencil"
                   text
-                  @click="isEditingBio = true"
+                  @click="startEditBio"
                 />
               </template>
             </div>
@@ -172,7 +172,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../axios-instance";
 import { useToast } from "primevue/usetoast";
 import formatDate from "../helpers/dateFormatting";
 import router from "../router";
@@ -185,11 +185,14 @@ const isEditingEmail = ref(false);
 const isEditingBio = ref(false);
 const isDeletionDialogVisible = ref(false);
 
+const editableEmail = ref("");
+const editableBio = ref("");
+
 const fileInput = ref<HTMLInputElement | null>(null);
 
-const fetchAccountInfo = async () => {
+async function loadAccount() {
   try {
-    const { data } = await axios.get(`/api/accounts/get/account/`);
+    const { data } = await api.get("/api/accounts/get/account/");
     userStore.setUser({
       username: data.username,
       email: data.email,
@@ -197,53 +200,103 @@ const fetchAccountInfo = async () => {
       profilePicture: data.profile_picture,
       joinDate: data.created_at?.substring(0, 10),
     });
-  } catch (error: unknown) {
-    if (
-      axios.isAxiosError(error) &&
-      error.response?.data?.code === "token_not_valid"
-    ) {
-      router.push("/login");
-      return;
-    }
-    console.error("Error fetching account info:", error);
+  } catch (err: unknown) {
+    router.push("/login");
+    toast.add({
+      severity: "error",
+      summary: "Account loading failed.",
+      detail: api.isAxiosError(err)
+        ? err.response?.data?.error || err.message
+        : "Account loading failed.",
+      life: 3000,
+    });
   }
-};
+}
+
+onMounted(loadAccount);
+
+function startEditEmail() {
+  editableEmail.value = userStore.email;
+  isEditingEmail.value = true;
+}
+function startEditBio() {
+  editableBio.value = userStore.bio;
+  isEditingBio.value = true;
+}
 
 const updateAccount = async () => {
   try {
-    const response = await axios.put(`/api/accounts/update/account/`, {
+    await api.put("/api/accounts/update/account/", {
       username: userStore.username,
       email: userStore.email,
       bio: userStore.bio,
       profile_picture: userStore.rawProfilePicture ?? null,
     });
-    userStore.setUser(response.data);
     toast.add({
       severity: "success",
       summary: "Account Updated",
-      detail: "Your account information has been updated successfully.",
-      life: 3000,
+      detail: "Saved!",
     });
-  } catch (error: unknown) {
+    await loadAccount();
+  } catch (error) {
     toast.add({
       severity: "error",
       summary: "Update Failed",
-      detail: axios.isAxiosError(error)
-        ? error.response?.data?.message || error.message
-        : "Update failed.",
-      life: 3000,
+      detail: (error as Error).message,
     });
   }
 };
 
 const saveEmail = async () => {
-  await updateAccount();
-  isEditingEmail.value = false;
+  try {
+    await api.put("/api/accounts/update/account/", {
+      username: userStore.username,
+      email: editableEmail.value,
+      bio: userStore.bio,
+      profile_picture: userStore.rawProfilePicture ?? null,
+    });
+    toast.add({
+      severity: "success",
+      summary: "Email Updated",
+      detail: "Saved!",
+      life: 3000,
+    });
+    isEditingEmail.value = false;
+    await loadAccount();
+  } catch (err: unknown) {
+    toast.add({
+      severity: "error",
+      summary: "Update Failed",
+      detail: err.message,
+      life: 3000,
+    });
+  }
 };
 
 const saveBio = async () => {
-  await updateAccount();
-  isEditingBio.value = false;
+  try {
+    await api.put("/api/accounts/update/account/", {
+      username: userStore.username,
+      email: userStore.email,
+      bio: editableBio.value,
+      profile_picture: userStore.rawProfilePicture ?? null,
+    });
+    toast.add({
+      severity: "success",
+      summary: "Bio Updated",
+      detail: "Saved!",
+      life: 3000,
+    });
+    isEditingBio.value = false;
+    await loadAccount();
+  } catch (err: any) {
+    toast.add({
+      severity: "error",
+      summary: "Update Failed",
+      detail: err.message,
+      life: 3000,
+    });
+  }
 };
 
 function triggerFileInput() {
@@ -255,10 +308,29 @@ function onProfilePictureSelected(event: Event) {
   if (target.files && target.files.length > 0) {
     const file = target.files[0];
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const full = e.target?.result as string;
       const [, raw] = full.split(",", 2);
       userStore.setRawProfilePicture(raw);
+      try {
+        await api.put("/api/accounts/update/account/", {
+          profile_picture: raw,
+        });
+        toast.add({
+          severity: "success",
+          summary: "Profile picture updated",
+          detail: "Saved!",
+          life: 3000,
+        });
+        await loadAccount();
+      } catch (error: unknown) {
+        toast.add({
+          severity: "error",
+          summary: "Update Failed",
+          detail: (error as Error).message,
+          life: 3000,
+        });
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -270,39 +342,19 @@ function confirmDeletion() {
 
 async function deleteAccount() {
   try {
-    await axios.delete(`/api/accounts/delete/account/`, {
-      withCredentials: true,
-    });
-
-    toast.add({
-      severity: "success",
-      summary: "Account Deleted",
-      detail: "Your account has been successfully deleted.",
-      life: 3000,
-    });
-
+    await api.delete("/api/accounts/delete/account/");
+    toast.add({ severity: "success", summary: "Deleted", detail: "Bye!" });
     router.push("/register");
   } catch (error: unknown) {
-    let errorMessage = "Account deletion failed.";
-    if (axios.isAxiosError(error) && error.response) {
-      errorMessage = error.response.data?.error || error.message;
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    }
     toast.add({
       severity: "error",
       summary: "Deletion Failed",
-      detail: errorMessage,
-      life: 3000,
+      detail: error.message,
     });
   } finally {
     isDeletionDialogVisible.value = false;
   }
 }
-
-onMounted(() => {
-  fetchAccountInfo();
-});
 </script>
 
 <style scoped>
