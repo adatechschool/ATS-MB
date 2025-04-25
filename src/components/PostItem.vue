@@ -23,9 +23,9 @@
         </div>
       </template>
 
-      <!-- <div class="p-4">
+      <div class="p-4">
         <p>{{ post.post_content }}</p>
-      </div> -->
+      </div>
 
       <!-- Pied de post : affiche la date de création et actions -->
       <template #footer>
@@ -54,7 +54,7 @@ import { useRouter } from "vue-router";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
 import { useToast } from "primevue/usetoast";
-import axios from "axios";
+import api from "../axios-instance";
 import { useAuth } from "../composables/useAuth";
 
 interface Post {
@@ -62,6 +62,8 @@ interface Post {
   user_id: number;
   post_content: string;
   created_at: string;
+  likes_count: number;
+  liked_by_user: boolean;
 }
 
 interface User {
@@ -77,8 +79,8 @@ const props = defineProps<{
 
 const { isAuthenticated } = useAuth();
 const router = useRouter();
-const liked = ref(false);
-const likeCount = ref(0);
+const liked = ref(props.post.liked_by_user);
+const likeCount = ref(props.post.likes_count || 0);
 const toast = useToast();
 
 // initialize like count if you have that in your DTO
@@ -104,10 +106,16 @@ function goToProfile() {
 
 const toggleLike = async () => {
   try {
-    const endpoint = liked.value ? "unlike" : "like";
-    await axios.post(`/api/likes/posts/${props.post.post_id}/${endpoint}/`);
+    const url = `/api/likes/posts/${props.post.post_id}/${liked.value ? "unlike" : "like"}/`;
+    await api.post(url);
     liked.value = !liked.value;
     likeCount.value += liked.value ? 1 : -1;
+    toast.add({
+      severity: "success",
+      summary: "Liked",
+      detail: "You liked this post.",
+      life: 3000,
+    });
   } catch (error) {
     toast.add({
       severity: "error",

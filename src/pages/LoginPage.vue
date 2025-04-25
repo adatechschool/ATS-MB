@@ -127,6 +127,13 @@ const onFormSubmit = async ({
         setAuthenticated(true);
         await fetchAuth();
         router.push("/profile");
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "Login failed.",
+          detail: "Wrong username or password.",
+          life: 3000,
+        });
       }
     } catch (error: unknown) {
       let errorMessage = "Login failed.";

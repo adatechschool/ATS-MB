@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
   const SESS = env.VITE_SESSION_SERVICE_PORT;
   const USERS = env.VITE_USER_SERVICE_PORT;
   const POSTS = env.VITE_POSTS_SERVICE_PORT;
+  const LIKES = env.VITE_LIKES_SERVICE_PORT;
 
   return {
     plugins: [vue(), tailwindcss()],
@@ -42,6 +43,11 @@ export default defineConfig(({ mode }) => {
         },
         "/api/posts": {
           target: `${DJANGO}:${POSTS}`,
+          changeOrigin: true,
+          secure: false,
+        },
+        "/api/likes": {
+          target: `${DJANGO}:${LIKES}`,
           changeOrigin: true,
           secure: false,
         },
