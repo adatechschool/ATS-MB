@@ -111,9 +111,9 @@ const toggleLike = async () => {
     liked.value = !liked.value;
     likeCount.value += liked.value ? 1 : -1;
     toast.add({
-      severity: "success",
-      summary: "Liked",
-      detail: "You liked this post.",
+      severity: liked.value ? "success" : "info",
+      summary: liked.value ? "Liked" : "Unliked",
+      detail: liked.value ? "You liked this post." : "You unliked this post.",
       life: 3000,
     });
   } catch (error) {
