@@ -12,7 +12,12 @@
         No posts available.
       </div>
       <div v-else>
-        <PostItem v-for="post in posts" :key="post.post_id" :post="post" />
+        <PostItem
+          v-for="post in posts"
+          :key="post.post_id"
+          :post="post"
+          :author="usersMap[post.user_id]"
+        />
       </div>
     </section>
   </main>
@@ -21,39 +26,55 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useToast } from "primevue/usetoast";
+import { useAuth } from "../composables/useAuth";
 import PostItem from "../components/PostItem.vue";
 
-type Post = {
+interface Post {
   post_id: number;
   user_id: number;
   post_content: string;
   created_at: string;
-};
+}
 
+interface User {
+  user_id: number;
+  username: string;
+  profile_picture: string | null;
+}
+
+const toast = useToast();
 const posts = ref<Post[]>([]);
+const usersMap = ref<Record<number, User>>({});
 const loading = ref(true);
+const { isAuthenticated } = useAuth();
 const error = ref<string | null>(null);
 
-const fetchPosts = async () => {
+const fetchPostsAndUsers = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const response = await axios.get("/api/posts/list/");
-    const data = response.data;
-    if (data.status === "success" && Array.isArray(data.data)) {
-      posts.value = data.data;
-    } else {
-      error.value = "Impossible de charger les posts.";
-    }
+    const [postRes, userRes] = await Promise.all([
+      axios.get("/api/posts/list/"),
+      axios.get("/api/users/get/users/"),
+    ]);
+    posts.value = postRes.data.data;
+    userRes.data.data.forEach((u: User) => {
+      usersMap.value[u.user_id] = u;
+    });
   } catch (err) {
-    console.error("Erreur lors de la récupération des posts", err);
-    error.value = "Erreur réseau lors de la récupération des posts.";
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: err.message,
+      life: 3000,
+    });
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(fetchPosts);
+onMounted(fetchPostsAndUsers);
 </script>
 
 <style scoped>

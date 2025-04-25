@@ -18,7 +18,12 @@ const routes = [
     component: ProfilePage,
     meta: { requiresAuth: true },
   },
-  { path: "/posts", name: "PostsPage", component: PostsPage },
+  {
+    path: "/posts",
+    name: "PostsPage",
+    component: PostsPage,
+    meta: { requiresAuth: true },
+  },
   { path: "/create-post", name: "CreatePost", component: CreatePost },
 ];
 

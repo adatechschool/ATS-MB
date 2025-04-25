@@ -5,25 +5,41 @@
     <Panel toggleable>
       <!-- En-tête du post : affiche une image d'avatar et le titre -->
       <template #header>
-        <div class="flex items-center gap-2">
-          <Avatar :image="avatarUrl" shape="circle" />
+        <div
+          class="flex cursor-pointer items-center gap-2"
+          @click="goToProfile"
+        >
+          <PrimeAvatar
+            v-if="author.profile_picture"
+            :image="`data:image/png;base64,${author.profile_picture}`"
+            shape="circle"
+          />
+          <PrimeAvatar
+            v-else
+            :label="author.username.charAt(0).toUpperCase()"
+            shape="circle"
+          />
+          <span class="ml-2 font-medium">{{ author.username }}</span>
         </div>
       </template>
 
-      <!-- Corps du post : le contenu textuel -->
-      <div class="p-4">
-        <p class="m-0 text-base text-gray-800 dark:text-gray-200">
-          {{ props.post.post_content }}
-        </p>
-      </div>
+      <!-- <div class="p-4">
+        <p>{{ post.post_content }}</p>
+      </div> -->
 
       <!-- Pied de post : affiche la date de création et actions -->
       <template #footer>
-        <div class="flex flex-wrap items-center justify-between gap-4 p-2">
+        <div class="flex items-center justify-between p-2">
           <div class="flex items-center gap-2">
-            <Button :icon="likeIcon" rounded text @click="toggleLike" />
+            <Button
+              :icon="liked ? 'pi pi-thumbs-up-fill' : 'pi pi-thumbs-up'"
+              rounded
+              text
+              @click="toggleLike"
+            />
+            <span>{{ likeCount }}</span>
           </div>
-          <span class="text-sm text-surface-500 dark:text-surface-400">
+          <span class="text-sm text-surface-500">
             {{ formattedDate }}
           </span>
         </div>
@@ -34,10 +50,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import Avatar from "primevue/avatar";
+import { useRouter } from "vue-router";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
+import { useToast } from "primevue/usetoast";
 import axios from "axios";
+import { useAuth } from "../composables/useAuth";
 
 interface Post {
   post_id: number;
@@ -46,18 +64,25 @@ interface Post {
   created_at: string;
 }
 
-const props = defineProps<{ post: Post }>();
+interface User {
+  user_id: number;
+  username: string;
+  profile_picture: string | null;
+}
 
-// Avatar statique pour exemple
-const avatarUrl =
-  "https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png";
+const props = defineProps<{
+  post: Post;
+  author: User;
+}>();
 
+const { isAuthenticated } = useAuth();
+const router = useRouter();
 const liked = ref(false);
+const likeCount = ref(0);
+const toast = useToast();
 
-// Détermine l'icône en fonction de l'état
-const likeIcon = computed(() =>
-  liked.value ? "pi pi-thumbs-up-fill" : "pi pi-thumbs-up",
-);
+// initialize like count if you have that in your DTO
+// likeCount.value = props.post.likes_count || 0
 
 // Formatage de la date de création
 const formattedDate = computed(() => {
@@ -69,22 +94,29 @@ const formattedDate = computed(() => {
   });
 });
 
+function goToProfile() {
+  if (isAuthenticated.value) {
+    router.push("/profile");
+  } else {
+    router.push("/login");
+  }
+}
+
 const toggleLike = async () => {
   try {
     const endpoint = liked.value ? "unlike" : "like";
-    await axios.post(
-      `/api/likes/posts/${props.post.post_id}/${endpoint}/`,
-      {},
-      { headers: { Authorization: `Token ${token}` } },
-    );
+    await axios.post(`/api/likes/posts/${props.post.post_id}/${endpoint}/`);
     liked.value = !liked.value;
+    likeCount.value += liked.value ? 1 : -1;
   } catch (error) {
-    console.error("Erreur like/unlike", error);
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: error.message,
+      life: 3000,
+    });
   }
 };
-
-// Token statique pour exemple, à remplacer par auth real
-const token = "774510dbb0111f03beace204e7f39d5d722bf09d";
 </script>
 
 <style scoped>
